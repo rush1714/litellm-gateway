@@ -6,7 +6,7 @@ ENV_FILE="${ENV_FILE:-$ROOT_DIR/.env}"
 
 load_env() {
   if [[ ! -f "$ENV_FILE" ]]; then
-    echo "WARNING: $ENV_FILE not found. Copy .env.example to .env and fill in values."
+    echo "WARNING: $ENV_FILE not found. Create .env from the committed placeholder and fill in values."
     return
   fi
 

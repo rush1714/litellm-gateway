@@ -2,6 +2,7 @@
 
 COMPOSE ?= $(shell if command -v podman >/dev/null 2>&1; then printf 'podman compose'; else printf 'docker compose'; fi)
 COMPOSE_FILE ?= deploy/docker-compose.yml
+COMPOSE_ENV_FILE ?= .env
 
 install:
 	uv sync
@@ -28,16 +29,16 @@ format:
 	uv run ruff format .
 
 docker-config:
-	$(COMPOSE) -f $(COMPOSE_FILE) --env-file .env config --quiet
+	$(COMPOSE) -f $(COMPOSE_FILE) --env-file $(COMPOSE_ENV_FILE) config --quiet
 
 docker-up:
-	$(COMPOSE) -f $(COMPOSE_FILE) --env-file .env up -d --build
+	$(COMPOSE) -f $(COMPOSE_FILE) --env-file $(COMPOSE_ENV_FILE) up -d --build
 
 docker-down:
-	$(COMPOSE) -f $(COMPOSE_FILE) --env-file .env down
+	$(COMPOSE) -f $(COMPOSE_FILE) --env-file $(COMPOSE_ENV_FILE) down
 
 docker-logs:
-	$(COMPOSE) -f $(COMPOSE_FILE) --env-file .env logs -f litellm
+	$(COMPOSE) -f $(COMPOSE_FILE) --env-file $(COMPOSE_ENV_FILE) logs -f litellm
 
 clean:
 	rm -f logs/litellm.pid

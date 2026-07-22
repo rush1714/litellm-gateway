@@ -18,18 +18,14 @@ openspec/               OpenSpec 配置
 
 - `config/litellm.yaml`：当前 LiteLLM Proxy 配置。
 - `config/litellm.backup.yaml`：历史/备用配置。
-- `.env.example`：环境变量模板；复制为 `.env` 后填入真实值。
+- `.env`：环境变量模板；初始提交只包含占位值，部署前请填入真实值。
 - `pyproject.toml` / `uv.lock`：Python 依赖声明与锁定文件。
 - `deploy/Dockerfile` / `deploy/docker-compose.yml`：容器化部署。
 - `Makefile`：常用命令入口。
 
 ## 环境变量
 
-先创建本地环境文件：
-
-```bash
-cp .env.example .env
-```
+先编辑根目录 `.env`，把占位值替换为真实配置。
 
 需要填写：
 
@@ -61,7 +57,6 @@ make stop
 ## Podman / Docker Compose 部署
 
 ```bash
-cp .env.example .env
 # 编辑 .env
 make docker-up
 make docker-logs

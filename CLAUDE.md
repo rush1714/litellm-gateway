@@ -42,7 +42,7 @@ This repository is an engineered deployment wrapper for a LiteLLM Gateway, not a
 
 - `config/litellm.yaml` is the active LiteLLM proxy configuration. It reads `LITELLM_MASTER_KEY`, `DATABASE_URL`, `ICA_BASE`, and `ICA_KEY` from the environment and defines Claude-compatible aliases, existing custom aliases, plus router settings. Preserve the existing model mapping semantics unless the user asks to change routing.
 - `config/litellm.backup.yaml` is a historical/alternate LiteLLM config. Treat `config/litellm.yaml` as the runtime source.
-- `.env` supplies local secrets and is intentionally ignored. `.env.example` documents required variables without real values.
+- `.env` is committed as a placeholder environment template. Do not commit real local secrets; keep them in `.env.local` or another ignored file when needed.
 - `deploy/scripts/start.sh` locates the repo root dynamically, loads `.env`, starts `litellm --config config/litellm.yaml` on `LITELLM_HOST`/`LITELLM_PORT` (default `4001`), writes logs to `logs/litellm.log`, and records `logs/litellm.pid`.
 - `deploy/scripts/status.sh` reports the PID/port state and calls `/health` and `/v1/models`. It uses `LITELLM_MASTER_KEY` from `.env` when available and does not contain a fallback secret.
 - `deploy/scripts/stop.sh` stops by `logs/litellm.pid` first and falls back to the configured port.

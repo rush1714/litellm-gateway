@@ -1,7 +1,6 @@
 # Environment and secrets
-.env
+.env.local
 .env.*
-!.env.example
 
 # Python
 .venv/
