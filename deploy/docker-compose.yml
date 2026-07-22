@@ -1,0 +1,31 @@
+services:
+  litellm:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: litellm-gateway:local
+    container_name: litellm-gateway
+    env_file:
+      - ../.env
+    environment:
+      LITELLM_CONFIG: /app/config/litellm.yaml
+      LITELLM_PORT: "${LITELLM_PORT:-4001}"
+      NO_PROXY: "${NO_PROXY:-localhost,127.0.0.1,::1}"
+      no_proxy: "${no_proxy:-localhost,127.0.0.1,::1}"
+    ports:
+      - "${LITELLM_PORT:-4001}:${LITELLM_PORT:-4001}"
+    extra_hosts:
+      - "litellm.top:host-gateway"
+    volumes:
+      - ../config/litellm.yaml:/app/config/litellm.yaml:ro
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS -H \"Authorization: Bearer $$LITELLM_MASTER_KEY\" http://localhost:$${LITELLM_PORT:-4001}/health >/dev/null || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

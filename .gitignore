@@ -1,0 +1,32 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Runtime logs and PIDs
+logs/*
+!logs/.gitkeep
+*.log
+*.pid
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Claude local/session artifacts
+.claude/plan-*.md
+.claude/settings.local.json
+
+# Local Docker/runtime artifacts
+*.sqlite
+*.db

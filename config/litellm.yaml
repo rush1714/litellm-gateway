@@ -1,0 +1,131 @@
+general_settings:
+  master_key: "os.environ/LITELLM_MASTER_KEY"
+  database_url: "os.environ/DATABASE_URL"
+litellm_settings:
+  drop_params: true
+########################################################
+# Models
+########################################################
+model_list:
+  ########################################################
+  # Claude-compatible aliases for Claude Code clients
+  ########################################################
+  - model_name: claude-sonnet-5
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: claude-sonnet-4-5
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: claude-opus-4-8
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: claude-opus-4-5
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: claude-haiku-4-5
+    litellm_params:
+      model: openai/ibm/granite-4-h-small
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # GPT-5.5 主力 Coding
+  ########################################################
+  - model_name: gpt-best
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # 稳定开发别名
+  ########################################################
+  - model_name: gpt-coding
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # 快速响应别名
+  ########################################################
+  - model_name: gpt-fast
+    litellm_params:
+      model: openai/ibm/granite-4-h-small
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # Gemini 长上下文分析
+  ########################################################
+  - model_name: gemini
+    litellm_params:
+      model: openai/gemini-3.1-pro-preview
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # Llama4 低成本
+  ########################################################
+  - model_name: llama
+    litellm_params:
+      model: openai/meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # IBM Granite
+  ########################################################
+  - model_name: granite
+    litellm_params:
+      model: openai/ibm/granite-4-h-small
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+########################################################
+# Router
+########################################################
+router_settings:
+  num_retries: 2
+  timeout: 180
+  fallbacks:
+    # Claude-compatible aliases
+    - claude-sonnet-5:
+        - claude-opus-4-8
+        - gpt-best
+        - gemini
+    - claude-sonnet-4-5:
+        - claude-sonnet-5
+        - gpt-best
+        - gemini
+    - claude-opus-4-8:
+        - claude-sonnet-5
+        - gpt-coding
+        - gemini
+    - claude-opus-4-5:
+        - claude-opus-4-8
+        - gpt-coding
+        - gemini
+    - claude-haiku-4-5:
+        - gpt-fast
+        - granite
+    # GPT-5.5失败
+    - gpt-best:
+        - gpt-coding
+        - gemini
+    # GPT-5.4失败
+    - gpt-coding:
+        - gpt-best
+        - gemini
+    # GPT-5.1失败
+    - gpt-fast:
+        - granite
+        - llama
+    # Gemini失败
+    - gemini:
+        - gpt-coding
+        - llama
+    # Llama失败
+    - llama:
+        - granite

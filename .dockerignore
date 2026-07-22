@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+.venv/
+.idea/
+.vscode/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+logs/*
+!logs/.gitkeep
+.DS_Store
+.git/
+.claude/plan-*.md
+.claude/settings.local.json
