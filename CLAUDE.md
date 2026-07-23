@@ -23,9 +23,12 @@ make stop
 make prisma-check
 uv run python tools/check_prisma.py
 
-# Lint/format Python files
+# Lint/format/review
 make lint
 make format
+make review
+make review-report
+make hooks-install
 
 # Podman/Docker Compose deployment helpers
 make docker-config
@@ -35,6 +38,18 @@ make docker-down
 ```
 
 The project uses `uv` with `pyproject.toml` and `uv.lock`. Runtime dependencies are LiteLLM with its proxy extra, Prisma, python-dotenv, and PyYAML. Ruff is the development linter/formatter.
+
+## Commit and push workflow
+
+- Do not commit or push automatically. After code changes, present:
+  - summary of changed files,
+  - checks run and their results,
+  - proposed Conventional Commit message,
+  - exact `git commit` command,
+  - exact `git push` command.
+- Wait for the user to confirm before running commit. If the harness blocks push, ask the user to run the provided `git push` command.
+- Use Conventional Commits. Allowed types are `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `build`, `ci`, `perf`, `style`, `revert`, and `ops`.
+- If a review or security scan is meaningful, write a Markdown report under `docs/reports/` and mention whether it is committed.
 
 ## Architecture overview
 
@@ -48,6 +63,7 @@ This repository is an engineered deployment wrapper for a LiteLLM Gateway, not a
 - `deploy/scripts/stop.sh` stops by `logs/litellm.pid` first and falls back to the configured port.
 - `deploy/Dockerfile` and `deploy/docker-compose.yml` provide container deployment. Compose uses `.env`, exposes host `${LITELLM_PORT:-4001}` to the same container port, mounts `config/litellm.yaml` read-only, and maps `litellm.top` to the host gateway for local database access. `Makefile` prefers `podman compose` and falls back to `docker compose`.
 - `tools/check_prisma.py` is an async Prisma connectivity check. It loads `.env`, reads `DATABASE_URL`, masks credentials in output, and runs `SELECT 1`.
+- `tools/quality_checks.py` provides fast hook/review checks and optional Markdown reports.
 - `docs/sql/litellm-usage-queries.sql` contains reporting queries for the LiteLLM PostgreSQL `"LiteLLM_SpendLogs"` table; camelCase columns such as `"startTime"` and `"endTime"` must be quoted.
 
 ## OpenSpec workflow
