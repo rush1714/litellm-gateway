@@ -87,21 +87,22 @@ podman compose -f deploy/docker-compose.yml --env-file .env down
 - `ICA_BASE`
 - `ICA_KEY`
 
-当前配置包含 Claude-compatible 别名、现有自定义模型别名和 router fallback。修改模型、上游或 fallback 时，优先改 `config/litellm.yaml`，然后重启服务。
+当前配置包含 Claude-compatible 别名、按用途优化的自定义模型别名和 router fallback。模型来源与路由策略见 `docs/model-routing.md`。修改模型、上游或 fallback 时，优先改 `config/litellm.yaml`，然后重启服务。
 
 当前主要模型别名：
 
-- `claude-sonnet-5`
-- `claude-sonnet-4-5`
-- `claude-opus-4-8`
-- `claude-opus-4-5`
-- `claude-haiku-4-5`
-- `gpt-best`
-- `gpt-coding`
-- `gpt-fast`
-- `gemini`
-- `llama`
-- `granite`
+- `claude-sonnet-5`：默认 Claude Code-compatible 平衡编码/推理
+- `claude-opus-4-8`：强多步骤/深度任务
+- `claude-haiku-4-5`：快速轻量任务
+- `gpt-best`：最高能力自定义别名
+- `gpt-coding`：平衡编码与生产力
+- `gpt-fast`：快速低成本
+- `gpt-multimodal` / `gpt-4o`：多模态任务
+- `gemini`：长上下文分析
+- `gemini-fast`：快速 Gemini fallback
+- `llama`：长引导任务与 OSS-style fallback
+- `granite`：小模型稳定 fallback
+- `gemma`：Gemma preview 试验别名
 
 ## 常用运维命令
 

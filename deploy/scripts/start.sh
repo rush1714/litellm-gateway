@@ -42,7 +42,9 @@ load_env() {
           value="${value:1:${#value}-2}"
         fi
       fi
-      export "$key=$value"
+      if [[ -z "${!key+x}" ]]; then
+        export "$key=$value"
+      fi
     fi
   done < "$ENV_FILE"
 
@@ -70,8 +72,8 @@ LITELLM_CONFIG="${LITELLM_CONFIG:-$ROOT_DIR/config/litellm.yaml}"
 LITELLM_HOST="${LITELLM_HOST:-0.0.0.0}"
 LITELLM_PORT="${LITELLM_PORT:-4001}"
 LOG_DIR="${LOG_DIR:-$ROOT_DIR/logs}"
-LOG_FILE="${LOG_FILE:-$LOG_DIR/litellm.log}"
-PID_FILE="${PID_FILE:-$LOG_DIR/litellm.pid}"
+LOG_FILE="${LOG_FILE:-$LOG_DIR/litellm-$LITELLM_PORT.log}"
+PID_FILE="${PID_FILE:-$LOG_DIR/litellm-$LITELLM_PORT.pid}"
 
 if [[ -d "$ROOT_DIR/.venv/bin" ]]; then
   export PATH="$ROOT_DIR/.venv/bin:$PATH"
@@ -81,9 +83,16 @@ NO_PROXY_DEFAULT="localhost,127.0.0.1,::1"
 export NO_PROXY="${NO_PROXY:+$NO_PROXY,}$NO_PROXY_DEFAULT"
 export no_proxy="${no_proxy:+$no_proxy,}$NO_PROXY_DEFAULT"
 
-if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-  echo "LiteLLM is already running with PID $(cat "$PID_FILE")"
-  exit 0
+if command -v lsof >/dev/null 2>&1; then
+  PID=$(lsof -tiTCP:"$LITELLM_PORT" -sTCP:LISTEN || true)
+  if [[ -n "$PID" ]]; then
+    echo "LiteLLM is already running on port $LITELLM_PORT (PID $(tr '\n' ' ' <<< "$PID"))"
+    exit 0
+  fi
+fi
+
+if [[ -f "$PID_FILE" ]]; then
+  rm -f "$PID_FILE"
 fi
 
 require_command

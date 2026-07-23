@@ -85,7 +85,7 @@ Claude should not commit or push without asking first. The preferred handoff is:
 2. Checks that were run.
 3. Proposed commit message.
 4. Exact commit command.
-5. Exact push command.
+5. Exact `make sync-branches` command for pushing `main` and syncing `dev`/`sit`.
 6. Ask for confirmation.
 
 Example:
@@ -93,10 +93,42 @@ Example:
 ```bash
 git add .
 git commit -m "chore: add project quality hooks" -m "Co-Authored-By: Claude <noreply@anthropic.com>"
-git push origin main
+make sync-branches
 ```
 
-If Claude Code is blocked from pushing by safety policy, the user should run the printed `git push` command.
+If Claude Code is blocked from pushing by safety policy, the user should run the printed sync command.
+
+## Branch sync after confirmed commits
+
+After the user confirms a commit, the preferred sync command is:
+
+```bash
+make sync-branches
+```
+
+This helper requires the current branch to be `main` and the working tree to be clean. It then:
+
+1. runs `make review`,
+2. pushes `main`,
+3. fast-forwards `dev` from `main` and pushes `dev`,
+4. fast-forwards `sit` from `main` and pushes `sit`,
+5. returns to `main`.
+
+Manual equivalent:
+
+```bash
+git push origin main
+
+git checkout dev
+git merge --ff-only main
+git push origin dev
+
+git checkout sit
+git merge --ff-only main
+git push origin sit
+
+git checkout main
+```
 
 ## Local environment convention
 

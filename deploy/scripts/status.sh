@@ -39,7 +39,9 @@ load_env() {
           value="${value:1:${#value}-2}"
         fi
       fi
-      export "$key=$value"
+      if [[ -z "${!key+x}" ]]; then
+        export "$key=$value"
+      fi
     fi
   done < "$ENV_FILE"
 }
@@ -48,7 +50,7 @@ load_env
 
 LITELLM_PORT="${LITELLM_PORT:-4001}"
 LITELLM_HOST="${LITELLM_HOST:-localhost}"
-PID_FILE="${PID_FILE:-$ROOT_DIR/logs/litellm.pid}"
+PID_FILE="${PID_FILE:-$ROOT_DIR/logs/litellm-$LITELLM_PORT.pid}"
 BASE_URL="${LITELLM_BASE_URL:-http://$LITELLM_HOST:$LITELLM_PORT}"
 NO_PROXY_DEFAULT="localhost,127.0.0.1,::1"
 export NO_PROXY="${NO_PROXY:+$NO_PROXY,}$NO_PROXY_DEFAULT"
@@ -75,12 +77,10 @@ echo "=============================="
 
 echo ""
 echo "[Process]"
-if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-  echo "running (PID $(cat "$PID_FILE"))"
-elif command -v lsof >/dev/null 2>&1 && lsof -tiTCP:"$LITELLM_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+if command -v lsof >/dev/null 2>&1 && lsof -tiTCP:"$LITELLM_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
   echo "running on port $LITELLM_PORT (PID $(lsof -tiTCP:"$LITELLM_PORT" -sTCP:LISTEN | tr '\n' ' '))"
 else
-  echo "not running"
+  echo "not running on port $LITELLM_PORT"
 fi
 
 echo ""

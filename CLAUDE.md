@@ -41,13 +41,13 @@ The project uses `uv` with `pyproject.toml` and `uv.lock`. Runtime dependencies 
 
 ## Commit and push workflow
 
-- Do not commit or push automatically. After code changes, present:
+- Do not commit or push without confirmation. After code changes, present:
   - summary of changed files,
   - checks run and their results,
   - proposed Conventional Commit message,
   - exact `git commit` command,
-  - exact `git push` command.
-- Wait for the user to confirm before running commit. If the harness blocks push, ask the user to run the provided `git push` command.
+  - exact `make sync-branches` command for pushing `main` and syncing `dev`/`sit`.
+- After the user confirms, run the commit and branch sync flow automatically when the harness permits it. If the harness blocks push, ask the user to run the provided command.
 - Use Conventional Commits. Allowed types are `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `build`, `ci`, `perf`, `style`, `revert`, and `ops`.
 - If a review or security scan is meaningful, write a Markdown report under `docs/reports/` and mention whether it is committed.
 
@@ -55,12 +55,12 @@ The project uses `uv` with `pyproject.toml` and `uv.lock`. Runtime dependencies 
 
 This repository is an engineered deployment wrapper for a LiteLLM Gateway, not a custom application server.
 
-- `config/litellm.yaml` is the active LiteLLM proxy configuration. It reads `LITELLM_MASTER_KEY`, `DATABASE_URL`, `ICA_BASE`, and `ICA_KEY` from the environment and defines Claude-compatible aliases, existing custom aliases, plus router settings. Preserve the existing model mapping semantics unless the user asks to change routing.
+- `config/litellm.yaml` is the active LiteLLM proxy configuration. It reads `LITELLM_MASTER_KEY`, `DATABASE_URL`, `ICA_BASE`, and `ICA_KEY` from the environment and defines Claude-compatible aliases, best-use custom aliases, plus router settings. `docs/can-use-models-list.md` is the source model catalog; `docs/model-routing.md` documents the alias/fallback strategy. Preserve the existing alias intent unless the user asks to change routing.
 - `config/litellm.backup.yaml` is a historical/alternate LiteLLM config. Treat `config/litellm.yaml` as the runtime source.
 - `.env` is committed as a placeholder environment template. Do not commit real local secrets; keep them in `.env.local` or another ignored file when needed.
-- `deploy/scripts/start.sh` locates the repo root dynamically, loads `.env`, starts `litellm --config config/litellm.yaml` on `LITELLM_HOST`/`LITELLM_PORT` (default `4001`), writes logs to `logs/litellm.log`, and records `logs/litellm.pid`.
-- `deploy/scripts/status.sh` reports the PID/port state and calls `/health` and `/v1/models`. It uses `LITELLM_MASTER_KEY` from `.env` when available and does not contain a fallback secret.
-- `deploy/scripts/stop.sh` stops by `logs/litellm.pid` first and falls back to the configured port.
+- `deploy/scripts/start.sh` locates the repo root dynamically, resolves symlinks from `/Users/guobiao/bin`, loads `.env` without overriding explicit environment variables, starts `litellm --config config/litellm.yaml` on `LITELLM_HOST`/`LITELLM_PORT` (default `4001`), writes logs to `logs/litellm-$LITELLM_PORT.log`, and records `logs/litellm-$LITELLM_PORT.pid`.
+- `deploy/scripts/status.sh` reports the configured port state and calls `/health` and `/v1/models`. It uses `LITELLM_MASTER_KEY` from `.env` when available and does not contain a fallback secret.
+- `deploy/scripts/stop.sh` stops only the listener on the configured `LITELLM_PORT`; it does not kill from a stale PID file unless that process is actually listening on the target port.
 - `deploy/Dockerfile` and `deploy/docker-compose.yml` provide container deployment. Compose uses `.env`, exposes host `${LITELLM_PORT:-4001}` to the same container port, mounts `config/litellm.yaml` read-only, and maps `litellm.top` to the host gateway for local database access. `Makefile` prefers `podman compose` and falls back to `docker compose`.
 - `tools/check_prisma.py` is an async Prisma connectivity check. It loads `.env`, reads `DATABASE_URL`, masks credentials in output, and runs `SELECT 1`.
 - `tools/quality_checks.py` provides fast hook/review checks and optional Markdown reports.

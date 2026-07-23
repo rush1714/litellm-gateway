@@ -1,4 +1,4 @@
-.PHONY: install start stop status health prisma-check lint format review review-report hooks-install docker-config docker-up docker-down docker-logs clean
+.PHONY: install start stop status health prisma-check lint format review review-report hooks-install sync-branches docker-config docker-up docker-down docker-logs clean
 
 COMPOSE ?= $(shell if command -v podman >/dev/null 2>&1; then printf 'podman compose'; else printf 'docker compose'; fi)
 COMPOSE_FILE ?= deploy/docker-compose.yml
@@ -38,6 +38,9 @@ review-report:
 hooks-install:
 	git config core.hooksPath .githooks
 	chmod +x .githooks/pre-commit .githooks/commit-msg .githooks/pre-push
+
+sync-branches:
+	./tools/sync_branches.sh
 
 docker-config:
 	$(COMPOSE) -f $(COMPOSE_FILE) --env-file $(COMPOSE_ENV_FILE) config --quiet

@@ -39,7 +39,9 @@ load_env() {
           value="${value:1:${#value}-2}"
         fi
       fi
-      export "$key=$value"
+      if [[ -z "${!key+x}" ]]; then
+        export "$key=$value"
+      fi
     fi
   done < "$ENV_FILE"
 }

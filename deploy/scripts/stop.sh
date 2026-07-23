@@ -39,7 +39,9 @@ load_env() {
           value="${value:1:${#value}-2}"
         fi
       fi
-      export "$key=$value"
+      if [[ -z "${!key+x}" ]]; then
+        export "$key=$value"
+      fi
     fi
   done < "$ENV_FILE"
 }
@@ -47,12 +49,12 @@ load_env() {
 load_env
 
 LITELLM_PORT="${LITELLM_PORT:-4001}"
-PID_FILE="${PID_FILE:-$ROOT_DIR/logs/litellm.pid}"
+PID_FILE="${PID_FILE:-$ROOT_DIR/logs/litellm-$LITELLM_PORT.pid}"
 NO_PROXY_DEFAULT="localhost,127.0.0.1,::1"
 export NO_PROXY="${NO_PROXY:+$NO_PROXY,}$NO_PROXY_DEFAULT"
 export no_proxy="${no_proxy:+$no_proxy,}$NO_PROXY_DEFAULT"
 
-stop_pid() {
+stop_pid_on_port() {
   local pid="$1"
   if [[ -z "$pid" ]]; then
     return 1
@@ -60,27 +62,29 @@ stop_pid() {
 
   if kill -0 "$pid" 2>/dev/null; then
     kill "$pid"
-    echo "LiteLLM stopped (PID $pid)"
+    echo "LiteLLM stopped on port $LITELLM_PORT (PID $pid)"
     return 0
   fi
 
   return 1
 }
 
-if [[ -f "$PID_FILE" ]]; then
-  if stop_pid "$(cat "$PID_FILE")"; then
-    rm -f "$PID_FILE"
-    exit 0
-  fi
-  rm -f "$PID_FILE"
-fi
-
 if command -v lsof >/dev/null 2>&1; then
   PID=$(lsof -tiTCP:"$LITELLM_PORT" -sTCP:LISTEN || true)
   if [[ -n "$PID" ]]; then
-    stop_pid "$PID"
+    while IFS= read -r pid; do
+      [[ -n "$pid" ]] || continue
+      stop_pid_on_port "$pid"
+    done <<< "$PID"
+    rm -f "$PID_FILE"
     exit 0
   fi
+else
+  echo "WARNING: lsof not found; cannot locate listener on port $LITELLM_PORT" >&2
 fi
 
-echo "LiteLLM is not running"
+if [[ -f "$PID_FILE" ]]; then
+  rm -f "$PID_FILE"
+fi
+
+echo "LiteLLM is not running on port $LITELLM_PORT"
