@@ -25,7 +25,7 @@ openspec/               OpenSpec 配置
 
 ## 环境变量
 
-先编辑根目录 `.env`，把占位值替换为真实配置。
+根目录 `.env` 是提交到仓库的环境变量模板；本机真实密钥建议放在不入库的 `.env.local`。
 
 需要填写：
 
@@ -52,6 +52,26 @@ make stop
 ./deploy/scripts/start.sh
 ./deploy/scripts/status.sh
 ./deploy/scripts/stop.sh
+```
+
+如果已在 `/Users/guobiao/bin` 配置本机快捷命令，可以直接运行：
+
+```bash
+litellm-start
+litellm-status
+litellm-stop
+```
+
+这些快捷命令是 wrapper，不修改仓库内原始 `deploy/scripts/*.sh`；默认使用：
+
+```bash
+ENV_FILE=/Users/guobiao/PRO/me/litellm-gateway/.env.local
+```
+
+因此本机真实环境变量可以放在 `.env.local`，仓库里的 `.env` 继续作为模板保留。需要临时切换环境文件时，也可以显式覆盖：
+
+```bash
+ENV_FILE=/path/to/other.env litellm-start
 ```
 
 ## Podman / Docker Compose 部署
