@@ -25,7 +25,8 @@ SECRET_PATTERNS = [
 
 ALLOWED_SECRET_VALUES = {
     "sk-change-me",
-    "postgresql://user:password@host:5432/litellm?sslmode=disable",
+    "postgresql://litellm:litellm-change-me@localhost:5432/litellm?sslmode=disable",
+    "postgresql://litellm:litellm-change-me@postgres:5432/litellm?sslmode=disable",
 }
 
 BLOCKED_STAGE_PATTERNS = [
@@ -206,15 +207,26 @@ def check_env_placeholder(files: list[str], *, staged: bool) -> CheckResult:
     text = read_staged(".env") if staged else read_worktree(".env")
     if text is None:
         return CheckResult(".env placeholder", True, [".env not readable; skipped."])
-    required = ["LITELLM_MASTER_KEY=sk-change-me", "ICA_KEY=change-me", "LITELLM_PORT=4001"]
+    required = [
+        "LITELLM_MASTER_KEY=sk-change-me",
+        "LITELLM_ENABLE_DATABASE=true",
+        "ICA_KEY=change-me",
+        "LITELLM_PORT=4001",
+    ]
     missing = [item for item in required if item not in text]
     realish = []
     for line in text.splitlines():
         stripped = line.strip()
         if stripped.startswith("ICA_BASE=") and "example.com" not in stripped:
             realish.append("ICA_BASE is not placeholder")
-        if stripped.startswith("DATABASE_URL=") and "user:password@host" not in stripped:
+        if stripped.startswith("DATABASE_URL=") and "litellm-change-me" not in stripped:
             realish.append("DATABASE_URL is not placeholder")
+        if stripped.startswith("POSTGRES_PASSWORD=") and "litellm-change-me" not in stripped:
+            realish.append("POSTGRES_PASSWORD is not placeholder")
+        if stripped.startswith("LITELLM_DOCKER_DATABASE_URL=") and (
+            "litellm-change-me" not in stripped
+        ):
+            realish.append("LITELLM_DOCKER_DATABASE_URL is not placeholder")
     ok = not missing and not realish
     details = missing + realish or [".env contains only expected placeholders."]
     return CheckResult(".env placeholder", ok, details)

@@ -66,9 +66,33 @@ require_command() {
   exit 1
 }
 
+truthy() {
+  case "${1:-}" in
+    1|true|TRUE|yes|YES|on|ON) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+prepare_config() {
+  RUNTIME_CONFIG="$LOG_DIR/litellm-$LITELLM_PORT.runtime.yaml"
+  if [[ -x "$ROOT_DIR/.venv/bin/python" ]]; then
+    PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
+  elif command -v python3 >/dev/null 2>&1; then
+    PYTHON_BIN="$(command -v python3)"
+  elif command -v python >/dev/null 2>&1; then
+    PYTHON_BIN="$(command -v python)"
+  else
+    echo "ERROR: python executable not found. Run: uv sync" >&2
+    exit 1
+  fi
+  "$PYTHON_BIN" "$ROOT_DIR/deploy/scripts/prepare-litellm-config.py" "$LITELLM_CONFIG" "$RUNTIME_CONFIG"
+  LITELLM_CONFIG="$RUNTIME_CONFIG"
+}
+
 load_env
 
 LITELLM_CONFIG="${LITELLM_CONFIG:-$ROOT_DIR/config/litellm.yaml}"
+LITELLM_ENABLE_DATABASE="${LITELLM_ENABLE_DATABASE:-true}"
 LITELLM_HOST="${LITELLM_HOST:-0.0.0.0}"
 LITELLM_PORT="${LITELLM_PORT:-4001}"
 LOG_DIR="${LOG_DIR:-$ROOT_DIR/logs}"
@@ -103,16 +127,24 @@ if [[ ! -f "$LITELLM_CONFIG" ]]; then
   exit 1
 fi
 
-for required_var in LITELLM_MASTER_KEY DATABASE_URL ICA_BASE ICA_KEY; do
+required_vars=(LITELLM_MASTER_KEY ICA_BASE ICA_KEY)
+if truthy "$LITELLM_ENABLE_DATABASE"; then
+  required_vars+=(DATABASE_URL)
+fi
+
+for required_var in "${required_vars[@]}"; do
   if [[ -z "${!required_var:-}" ]]; then
     echo "WARNING: $required_var is not set"
   fi
 done
 
+prepare_config
+
 echo "================================="
 echo " Starting LiteLLM Gateway"
 echo " Root:   $ROOT_DIR"
 echo " Config: $LITELLM_CONFIG"
+echo " DB:     $LITELLM_ENABLE_DATABASE"
 echo " Host:   $LITELLM_HOST"
 echo " Port:   $LITELLM_PORT"
 echo " Logs:   $LOG_FILE"

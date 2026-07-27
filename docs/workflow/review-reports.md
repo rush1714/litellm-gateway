@@ -48,7 +48,8 @@ make review
 The fast report is intentionally not a full security audit. For larger changes, add one or more of:
 
 ```bash
-make prisma-check ENV_FILE=.env.local
+make db-up COMPOSE_ENV_FILE=.env.local
+ENV_FILE=.env.local make prisma-check
 make docker-up COMPOSE_ENV_FILE=.env.local
 make docker-down COMPOSE_ENV_FILE=.env.local
 ```

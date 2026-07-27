@@ -9,6 +9,7 @@ config/                 LiteLLM 运行配置
 deploy/                 本机脚本与 Podman/Docker 部署文件
   scripts/              本机启动、停止、状态检查脚本
 tools/                  运维/诊断工具
+docs/database.md        PostgreSQL 安装、数据库开关和 4001 验证说明
 docs/sql/               LiteLLM PostgreSQL 用量查询 SQL
 logs/                   本机运行日志和 PID 文件（日志不入库）
 openspec/               OpenSpec 配置
@@ -30,14 +31,44 @@ openspec/               OpenSpec 配置
 需要填写：
 
 - `LITELLM_MASTER_KEY`：访问 LiteLLM Proxy 的 master key。
-- `DATABASE_URL`：LiteLLM 持久化 PostgreSQL 连接串。
+- `LITELLM_ENABLE_DATABASE`：是否启用 LiteLLM PostgreSQL 持久化，默认 `true`。
+- `DATABASE_URL`：本机运行时使用的 PostgreSQL 连接串；仅在 `LITELLM_ENABLE_DATABASE=true` 时需要。
+- `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD`：Compose PostgreSQL 服务的数据库、用户和密码。
+- `LITELLM_DOCKER_DATABASE_URL`：容器内 LiteLLM 连接 Compose PostgreSQL 的连接串。
 - `ICA_BASE`：OpenAI-compatible 上游 base URL。
 - `ICA_KEY`：上游 API key。
 - `LITELLM_HOST` / `LITELLM_PORT`：本机脚本使用的监听地址和端口，默认 `0.0.0.0:4001`。
 
+数据库安装与初始化见 [`docs/database.md`](docs/database.md)。
+
 ## 本机开发与运行
 
-本项目使用 uv 管理 Python 依赖。
+本项目使用 uv 管理 Python 依赖，要求 Python `>=3.12,<3.13`。
+
+安装 uv：
+
+```bash
+# macOS（推荐）
+brew install uv
+
+# 或使用官方安装脚本
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+安装后确认 uv 可用：
+
+```bash
+uv --version
+```
+
+如果本机没有项目需要的 Python 版本，可以让 uv 安装 Python 3.12：
+
+```bash
+uv python install 3.12
+uv sync --python 3.12
+```
+
+如果已经有可用的 Python 3.12，直接同步依赖即可：
 
 ```bash
 uv sync
@@ -78,6 +109,8 @@ ENV_FILE=/path/to/other.env litellm-start
 
 ```bash
 # 编辑 .env
+make db-up
+make prisma-check
 make docker-up
 make docker-logs
 make docker-down
@@ -89,12 +122,13 @@ make docker-down
 make docker-config
 ```
 
-`Makefile` 会优先使用 `podman compose`，如果没有 Podman 则回退到 `docker compose`。Compose 默认将宿主机 `${LITELLM_PORT:-4001}` 映射到容器内相同端口，并只读挂载 `./config/litellm.yaml`。本地 `DATABASE_URL` 如果通过 hosts 指向宿主机（例如 `litellm.top -> 127.0.0.1`），Compose 会把 `litellm.top` 映射到容器可访问的 host gateway。
+`Makefile` 会优先使用 `podman compose`，如果没有 Podman 则回退到 `docker compose`。Compose 默认将宿主机 `${LITELLM_PORT:-4001}` 映射到容器内相同端口，并只读挂载 `./config/litellm.yaml`。`make docker-up` 会根据 `LITELLM_ENABLE_DATABASE` 决定是否启动 Compose PostgreSQL；启用数据库时，容器内 LiteLLM 使用 `LITELLM_DOCKER_DATABASE_URL` 连接 `postgres` 服务。通过 Makefile 使用 `COMPOSE_ENV_FILE=.env.local` 时，容器也会加载同一个 env 文件。
 
 也可以直接执行：
 
 ```bash
-podman compose -f deploy/docker-compose.yml --env-file .env up -d --build
+podman compose -f deploy/docker-compose.yml --env-file .env up -d postgres
+podman compose -f deploy/docker-compose.yml --env-file .env up -d --build litellm
 podman compose -f deploy/docker-compose.yml --env-file .env down
 ```
 
@@ -103,7 +137,7 @@ podman compose -f deploy/docker-compose.yml --env-file .env down
 `config/litellm.yaml` 通过 `os.environ/...` 读取敏感配置：
 
 - `LITELLM_MASTER_KEY`
-- `DATABASE_URL`
+- `DATABASE_URL`（仅在 `LITELLM_ENABLE_DATABASE=true` 的运行时配置中保留）
 - `ICA_BASE`
 - `ICA_KEY`
 
@@ -132,7 +166,10 @@ make start         # 启动本机 LiteLLM
 make stop          # 停止本机 LiteLLM
 make status        # 查看进程、health、models
 make health        # 等待 health 通过
-make prisma-check  # 检查 DATABASE_URL 对应 PostgreSQL 连通性
+make db-up         # 启动 Compose PostgreSQL
+make db-shell      # 进入 Compose PostgreSQL psql
+make prisma-check  # 数据库启用时检查 DATABASE_URL 连通性
+make docker-up     # 按数据库开关启动 Compose 服务
 make lint          # ruff check
 make format        # ruff format
 ```

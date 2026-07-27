@@ -1,4 +1,23 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: litellm-postgres
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-litellm}"
+      POSTGRES_USER: "${POSTGRES_USER:-litellm}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-litellm-change-me}"
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - litellm-postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-litellm} -d $${POSTGRES_DB:-litellm}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   litellm:
     build:
       context: ..
@@ -6,10 +25,12 @@ services:
     image: litellm-gateway:local
     container_name: litellm-gateway
     env_file:
-      - ../.env
+      - "${COMPOSE_PROJECT_ENV_FILE:-../.env}"
     environment:
       LITELLM_CONFIG: /app/config/litellm.yaml
+      LITELLM_RUNTIME_CONFIG: /tmp/litellm-runtime.yaml
       LITELLM_PORT: "${LITELLM_PORT:-4001}"
+      DATABASE_URL: "${LITELLM_DOCKER_DATABASE_URL:-postgresql://litellm:litellm-change-me@postgres:5432/litellm?sslmode=disable}"
       NO_PROXY: "${NO_PROXY:-localhost,127.0.0.1,::1}"
       no_proxy: "${no_proxy:-localhost,127.0.0.1,::1}"
     ports:
@@ -29,3 +50,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+
+volumes:
+  litellm-postgres-data:

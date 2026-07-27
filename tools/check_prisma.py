@@ -32,12 +32,22 @@ def append_csv_env(current: str | None, extra: str) -> str:
     return ",".join(current_parts)
 
 
+def is_database_enabled() -> bool:
+    return os.environ.get("LITELLM_ENABLE_DATABASE", "true") in {
+        "1",
+        "true",
+        "TRUE",
+        "yes",
+        "YES",
+        "on",
+        "ON",
+    }
+
+
 def get_database_url() -> str:
     database_url = os.environ.get("DATABASE_URL")
     if not database_url:
-        raise RuntimeError(
-            "DATABASE_URL is not set. Fill in DATABASE_URL in .env."
-        )
+        raise RuntimeError("DATABASE_URL is not set. Fill in DATABASE_URL in .env.")
     return database_url
 
 
@@ -52,6 +62,10 @@ def mask_database_url(database_url: str) -> str:
 
 async def main() -> int:
     load_environment()
+
+    if not is_database_enabled():
+        print("数据库未启用，跳过 Prisma 连通性检查。")
+        return 0
 
     try:
         database_url = get_database_url()

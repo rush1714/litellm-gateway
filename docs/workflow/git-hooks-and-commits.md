@@ -137,6 +137,7 @@ git checkout main
 - Run local checks with real values when needed:
 
 ```bash
+make db-up COMPOSE_ENV_FILE=.env.local
 ENV_FILE=.env.local uv run python tools/check_prisma.py
 make docker-up COMPOSE_ENV_FILE=.env.local
 ```
