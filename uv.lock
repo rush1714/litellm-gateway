@@ -747,10 +747,12 @@ name = "litellm-gateway"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "fastapi" },
     { name = "litellm", extra = ["proxy"] },
     { name = "prisma" },
     { name = "python-dotenv" },
     { name = "pyyaml" },
+    { name = "uvicorn" },
 ]
 
 [package.dev-dependencies]
@@ -760,10 +762,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "fastapi", specifier = ">=0.123.0" },
     { name = "litellm", extras = ["proxy"], specifier = "==1.92.0" },
     { name = "prisma", specifier = "==0.15.0" },
     { name = "python-dotenv", specifier = "==1.2.2" },
     { name = "pyyaml", specifier = "==6.0.3" },
+    { name = "uvicorn", specifier = ">=0.38.0" },
 ]
 
 [package.metadata.requires-dev]

@@ -1,4 +1,4 @@
-.PHONY: install start stop status health prisma-check db-up db-down db-logs db-shell lint format review review-report hooks-install sync-branches docker-config docker-up docker-down docker-logs clean
+.PHONY: install start stop status health prisma-check usage-api usage-api-test db-up db-down db-logs db-shell lint format review review-report hooks-install sync-branches docker-config docker-up docker-down docker-logs clean
 
 COMPOSE ?= $(shell if command -v podman >/dev/null 2>&1; then printf 'podman compose'; else printf 'docker compose'; fi)
 COMPOSE_FILE ?= deploy/docker-compose.yml
@@ -24,6 +24,12 @@ health:
 
 prisma-check:
 	uv run python tools/check_prisma.py
+
+usage-api:
+	uv run uvicorn usage_api.main:app --host $${USAGE_API_HOST:-127.0.0.1} --port $${USAGE_API_PORT:-4010}
+
+usage-api-test:
+	PYTHONPATH=. uv run python tests/test_usage_api.py
 
 db-up:
 	$(COMPOSE) -f $(COMPOSE_FILE) --env-file $(COMPOSE_ENV_FILE) up -d postgres
