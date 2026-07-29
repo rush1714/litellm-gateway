@@ -1,0 +1,164 @@
+general_settings:
+  master_key: "os.environ/LITELLM_MASTER_KEY"
+  database_url: "os.environ/DATABASE_URL"
+litellm_settings:
+  drop_params: true
+########################################################
+# Models
+########################################################
+model_list:
+  ########################################################
+  # Claude-compatible aliases for Claude Code clients
+  ########################################################
+  - model_name: claude-sonnet-5
+    litellm_params:
+      model: openai/gpt-5.6-terra-dzus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: claude-sonnet-4-5
+    litellm_params:
+      model: openai/gpt-5.6-terra-dzus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: claude-opus-4-8
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: claude-opus-4-5
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: claude-haiku-4-5
+    litellm_params:
+      model: openai/gpt-5.6-luna-dzus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # Best-use custom aliases from docs/can-use-models-list.md
+  ########################################################
+  - model_name: gpt-best
+    litellm_params:
+      model: openai/gpt-5.5-gus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: gpt-coding
+    litellm_params:
+      model: openai/gpt-5.6-terra-dzus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: gpt-fast
+    litellm_params:
+      model: openai/gpt-5.6-luna-dzus
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: gpt-multimodal
+    litellm_params:
+      model: openai/gpt-4o
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # Long-context and guided-task aliases
+  ########################################################
+  - model_name: gemini
+    litellm_params:
+      model: openai/gemini-3.1-pro-preview
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: gemini-fast
+    litellm_params:
+      model: openai/gemini-3.5-flash
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: llama
+    litellm_params:
+      model: openai/meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # Small and preview model aliases
+  ########################################################
+  - model_name: granite
+    litellm_params:
+      model: openai/ibm/granite-4-h-small
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: gemma
+    litellm_params:
+      model: openai/gemma-4-26b-a4b-it
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+########################################################
+# Router
+########################################################
+router_settings:
+  num_retries: 2
+  timeout: 180
+  fallbacks:
+    # Claude-compatible aliases
+    - claude-sonnet-5:
+        - claude-opus-4-8
+        - gpt-best
+        - gemini
+        - llama
+    - claude-sonnet-4-5:
+        - claude-sonnet-5
+        - gpt-best
+        - gemini
+    - claude-opus-4-8:
+        - gpt-best
+        - claude-sonnet-5
+        - gemini
+        - llama
+    - claude-opus-4-5:
+        - claude-opus-4-8
+        - gpt-coding
+        - gemini
+    - claude-haiku-4-5:
+        - gpt-fast
+        - gemini-fast
+        - granite
+    # Custom aliases by intended use
+    - gpt-best:
+        - gpt-coding
+        - gemini
+        - llama
+    - gpt-coding:
+        - gpt-best
+        - gemini
+        - llama
+    - gpt-fast:
+        - gemini-fast
+        - granite
+        - llama
+    - gpt-multimodal:
+        - gpt-4o
+        - gemini
+        - gpt-best
+    - gpt-4o:
+        - gpt-multimodal
+        - gemini
+        - gpt-best
+    - gemini:
+        - llama
+        - gpt-coding
+        - gpt-best
+    - gemini-fast:
+        - gpt-fast
+        - granite
+    - llama:
+        - gemini
+        - gpt-coding
+        - granite
+    - gemma:
+        - gemini-fast
+        - granite
+    - granite:
+        - gpt-fast
+        - llama
