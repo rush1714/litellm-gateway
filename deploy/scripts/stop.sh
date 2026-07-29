@@ -49,7 +49,9 @@ load_env() {
 load_env
 
 LITELLM_PORT="${LITELLM_PORT:-4001}"
+ICA_PROXY_PORT="${ICA_PROXY_PORT:-$((LITELLM_PORT + 100))}"
 PID_FILE="${PID_FILE:-$ROOT_DIR/logs/litellm-$LITELLM_PORT.pid}"
+ICA_PROXY_PID_FILE="${ICA_PROXY_PID_FILE:-$ROOT_DIR/logs/ica-proxy-$ICA_PROXY_PORT.pid}"
 NO_PROXY_DEFAULT="localhost,127.0.0.1,::1"
 export NO_PROXY="${NO_PROXY:+$NO_PROXY,}$NO_PROXY_DEFAULT"
 export no_proxy="${no_proxy:+$no_proxy,}$NO_PROXY_DEFAULT"
@@ -69,22 +71,42 @@ stop_pid_on_port() {
   return 1
 }
 
+stopped=false
+
 if command -v lsof >/dev/null 2>&1; then
   PID=$(lsof -tiTCP:"$LITELLM_PORT" -sTCP:LISTEN || true)
   if [[ -n "$PID" ]]; then
     while IFS= read -r pid; do
       [[ -n "$pid" ]] || continue
       stop_pid_on_port "$pid"
+      stopped=true
     done <<< "$PID"
     rm -f "$PID_FILE"
-    exit 0
+  fi
+
+  PROXY_PID=$(lsof -tiTCP:"$ICA_PROXY_PORT" -sTCP:LISTEN || true)
+  if [[ -n "$PROXY_PID" ]]; then
+    while IFS= read -r pid; do
+      [[ -n "$pid" ]] || continue
+      if kill -0 "$pid" 2>/dev/null; then
+        kill "$pid"
+        echo "ICA proxy stopped on port $ICA_PROXY_PORT (PID $pid)"
+        stopped=true
+      fi
+    done <<< "$PROXY_PID"
+    rm -f "$ICA_PROXY_PID_FILE"
   fi
 else
-  echo "WARNING: lsof not found; cannot locate listener on port $LITELLM_PORT" >&2
+  echo "WARNING: lsof not found; cannot locate listeners" >&2
 fi
 
 if [[ -f "$PID_FILE" ]]; then
   rm -f "$PID_FILE"
 fi
+if [[ -f "$ICA_PROXY_PID_FILE" ]]; then
+  rm -f "$ICA_PROXY_PID_FILE"
+fi
 
-echo "LiteLLM is not running on port $LITELLM_PORT"
+if [[ "$stopped" == "false" ]]; then
+  echo "LiteLLM is not running on port $LITELLM_PORT"
+fi

@@ -140,6 +140,12 @@ podman compose -f deploy/docker-compose.yml --env-file .env down
 - `DATABASE_URL`（仅在 `LITELLM_ENABLE_DATABASE=true` 的运行时配置中保留）
 - `ICA_BASE`
 - `ICA_KEY`
+- `LITELLM_USE_ICA_PROXY`（设为 `true` 时启动本地 ICA 代理）
+- `ICA_PROXY_BASE`（例如 `http://127.0.0.1:4101`，供 YAML 中需要代理的模型显式引用）
+- `ICA_RESPONSES_API_VERSION`（默认 `2025-03-01-preview`）
+- `ICA_PROXY_HOST` / `ICA_PROXY_PORT`（默认 `127.0.0.1:${LITELLM_PORT + 100}`，例如 `4001 -> 4101`）
+
+启动脚本在 `LITELLM_USE_ICA_PROXY=true` 时启动本地 ICA 代理。是否走代理由 YAML 显式决定：只有 `api_base: "os.environ/ICA_PROXY_BASE"` 的模型会走代理，其他模型继续使用 `api_base: "os.environ/ICA_BASE"`。代理只在 `/responses` 请求缺少 `api-version` 时追加 `ICA_RESPONSES_API_VERSION`，用于兼容 Claude Code 的 `/v1/messages` 到 OpenAI Responses API 转换；`/chat/completions` 会原样转发。
 
 当前配置包含 Claude-compatible 别名、按用途优化的自定义模型别名和 router fallback。模型来源与路由策略见 `docs/model-routing.md`。修改模型、上游或 fallback 时，优先改 `config/litellm.yaml`，然后重启服务。
 

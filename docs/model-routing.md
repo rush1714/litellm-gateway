@@ -4,6 +4,8 @@
 
 The upstream service is exposed as an OpenAI-compatible endpoint through `ICA_BASE` / `ICA_KEY`, so LiteLLM model identifiers use the `openai/<upstream-model-id>` provider prefix.
 
+The ICA compatibility proxy is opt-in per deployment and per model. Set `LITELLM_USE_ICA_PROXY=true` to start the local proxy, then set `api_base: "os.environ/ICA_PROXY_BASE"` only on model entries that need it. LiteLLM's Claude-compatible `/v1/messages` endpoint internally calls the OpenAI Responses API; ICA requires `/responses` calls to include `api-version=2025-03-01-preview` or later, while plain `/chat/completions` does not. The proxy preserves the configured ICA base for all paths and appends `ICA_RESPONSES_API_VERSION` only to `/responses` requests that do not already include `api-version`.
+
 ## Current alias strategy
 
 | Alias | Upstream model | Best use |
@@ -38,6 +40,7 @@ LiteLLM `/health` probes every configured alias/deployment. When several aliases
 
 - `/health` endpoint availability via `wait-for-health.sh`
 - `/v1/models` alias exposure via `status.sh`
+- `/v1/messages?beta=true` for Claude Code compatibility, especially Terra/Luna aliases that route through `/responses`
 
 Do not remove useful client-facing aliases only to deduplicate health probes unless the user explicitly asks for fewer aliases.
 

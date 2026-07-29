@@ -50,8 +50,11 @@ load_env
 
 LITELLM_PORT="${LITELLM_PORT:-4001}"
 LITELLM_HOST="${LITELLM_HOST:-localhost}"
+ICA_PROXY_PORT="${ICA_PROXY_PORT:-$((LITELLM_PORT + 100))}"
+ICA_PROXY_HOST="${ICA_PROXY_HOST:-127.0.0.1}"
 PID_FILE="${PID_FILE:-$ROOT_DIR/logs/litellm-$LITELLM_PORT.pid}"
 BASE_URL="${LITELLM_BASE_URL:-http://$LITELLM_HOST:$LITELLM_PORT}"
+ICA_PROXY_BASE="${ICA_PROXY_BASE:-http://$ICA_PROXY_HOST:$ICA_PROXY_PORT}"
 NO_PROXY_DEFAULT="localhost,127.0.0.1,::1"
 export NO_PROXY="${NO_PROXY:+$NO_PROXY,}$NO_PROXY_DEFAULT"
 export no_proxy="${no_proxy:+$no_proxy,}$NO_PROXY_DEFAULT"
@@ -81,6 +84,15 @@ if command -v lsof >/dev/null 2>&1 && lsof -tiTCP:"$LITELLM_PORT" -sTCP:LISTEN >
   echo "running on port $LITELLM_PORT (PID $(lsof -tiTCP:"$LITELLM_PORT" -sTCP:LISTEN | tr '\n' ' '))"
 else
   echo "not running on port $LITELLM_PORT"
+fi
+
+echo ""
+echo "[ICA Proxy]"
+if command -v lsof >/dev/null 2>&1 && lsof -tiTCP:"$ICA_PROXY_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+  echo "running on port $ICA_PROXY_PORT (PID $(lsof -tiTCP:"$ICA_PROXY_PORT" -sTCP:LISTEN | tr '\n' ' '))"
+  echo "base: $ICA_PROXY_BASE"
+else
+  echo "not running on port $ICA_PROXY_PORT"
 fi
 
 echo ""

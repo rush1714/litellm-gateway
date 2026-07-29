@@ -1,6 +1,8 @@
 general_settings:
   master_key: "os.environ/LITELLM_MASTER_KEY"
   database_url: "os.environ/DATABASE_URL"
+  store_model_in_db: true
+  store_prompts_in_spend_logs: true
 litellm_settings:
   drop_params: true
 ########################################################
@@ -13,12 +15,12 @@ model_list:
   - model_name: claude-sonnet-5
     litellm_params:
       model: openai/gpt-5.6-terra-dzus
-      api_base: "os.environ/ICA_BASE"
+      api_base: "os.environ/ICA_PROXY_BASE"
       api_key: "os.environ/ICA_KEY"
   - model_name: claude-sonnet-4-5
     litellm_params:
       model: openai/gpt-5.6-terra-dzus
-      api_base: "os.environ/ICA_BASE"
+      api_base: "os.environ/ICA_PROXY_BASE"
       api_key: "os.environ/ICA_KEY"
   - model_name: claude-opus-4-8
     litellm_params:
@@ -33,7 +35,7 @@ model_list:
   - model_name: claude-haiku-4-5
     litellm_params:
       model: openai/gpt-5.6-luna-dzus
-      api_base: "os.environ/ICA_BASE"
+      api_base: "os.environ/ICA_PROXY_BASE"
       api_key: "os.environ/ICA_KEY"
   ########################################################
   # Best-use custom aliases from docs/can-use-models-list.md
@@ -46,12 +48,12 @@ model_list:
   - model_name: gpt-coding
     litellm_params:
       model: openai/gpt-5.6-terra-dzus
-      api_base: "os.environ/ICA_BASE"
+      api_base: "os.environ/ICA_PROXY_BASE"
       api_key: "os.environ/ICA_KEY"
   - model_name: gpt-fast
     litellm_params:
       model: openai/gpt-5.6-luna-dzus
-      api_base: "os.environ/ICA_BASE"
+      api_base: "os.environ/ICA_PROXY_BASE"
       api_key: "os.environ/ICA_KEY"
   - model_name: gpt-multimodal
     litellm_params:

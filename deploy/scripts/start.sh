@@ -73,8 +73,7 @@ truthy() {
   esac
 }
 
-prepare_config() {
-  RUNTIME_CONFIG="$LOG_DIR/litellm-$LITELLM_PORT.runtime.yaml"
+resolve_python() {
   if [[ -x "$ROOT_DIR/.venv/bin/python" ]]; then
     PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
   elif command -v python3 >/dev/null 2>&1; then
@@ -85,8 +84,41 @@ prepare_config() {
     echo "ERROR: python executable not found. Run: uv sync" >&2
     exit 1
   fi
+}
+
+prepare_config() {
+  RUNTIME_CONFIG="$LOG_DIR/litellm-$LITELLM_PORT.runtime.yaml"
+  resolve_python
   "$PYTHON_BIN" "$ROOT_DIR/deploy/scripts/prepare-litellm-config.py" "$LITELLM_CONFIG" "$RUNTIME_CONFIG"
   LITELLM_CONFIG="$RUNTIME_CONFIG"
+}
+
+start_ica_proxy() {
+  if ! truthy "$LITELLM_USE_ICA_PROXY"; then
+    return
+  fi
+
+  if [[ -z "${ICA_BASE:-}" ]]; then
+    echo "WARNING: ICA_BASE is not set; ICA proxy will not start"
+    return
+  fi
+
+  if command -v lsof >/dev/null 2>&1; then
+    local existing_pid
+    existing_pid=$(lsof -tiTCP:"$ICA_PROXY_PORT" -sTCP:LISTEN || true)
+    if [[ -n "$existing_pid" ]]; then
+      echo "ICA proxy is already running on port $ICA_PROXY_PORT (PID $(tr '\n' ' ' <<< "$existing_pid"))"
+      return
+    fi
+  fi
+
+  resolve_python
+  export ICA_PROXY_TARGET_BASE="$ICA_BASE"
+  export ICA_PROXY_BASE
+  nohup "$PYTHON_BIN" "$ROOT_DIR/deploy/scripts/ica-responses-proxy.py" \
+    > "$ICA_PROXY_LOG_FILE" 2>&1 &
+  echo $! > "$ICA_PROXY_PID_FILE"
+  echo "ICA proxy started with PID $(cat "$ICA_PROXY_PID_FILE") on $ICA_PROXY_BASE"
 }
 
 load_env
@@ -95,9 +127,17 @@ LITELLM_CONFIG="${LITELLM_CONFIG:-$ROOT_DIR/config/litellm.yaml}"
 LITELLM_ENABLE_DATABASE="${LITELLM_ENABLE_DATABASE:-true}"
 LITELLM_HOST="${LITELLM_HOST:-0.0.0.0}"
 LITELLM_PORT="${LITELLM_PORT:-4001}"
+ICA_PROXY_HOST="${ICA_PROXY_HOST:-127.0.0.1}"
+ICA_PROXY_PORT="${ICA_PROXY_PORT:-$((LITELLM_PORT + 100))}"
+ICA_RESPONSES_API_VERSION="${ICA_RESPONSES_API_VERSION:-2025-03-01-preview}"
+ICA_PROXY_BASE="${ICA_PROXY_BASE:-http://$ICA_PROXY_HOST:$ICA_PROXY_PORT}"
+LITELLM_USE_ICA_PROXY="${LITELLM_USE_ICA_PROXY:-false}"
 LOG_DIR="${LOG_DIR:-$ROOT_DIR/logs}"
 LOG_FILE="${LOG_FILE:-$LOG_DIR/litellm-$LITELLM_PORT.log}"
 PID_FILE="${PID_FILE:-$LOG_DIR/litellm-$LITELLM_PORT.pid}"
+ICA_PROXY_LOG_FILE="${ICA_PROXY_LOG_FILE:-$LOG_DIR/ica-proxy-$ICA_PROXY_PORT.log}"
+ICA_PROXY_PID_FILE="${ICA_PROXY_PID_FILE:-$LOG_DIR/ica-proxy-$ICA_PROXY_PORT.pid}"
+export ICA_PROXY_BASE ICA_RESPONSES_API_VERSION
 
 if [[ -d "$ROOT_DIR/.venv/bin" ]]; then
   export PATH="$ROOT_DIR/.venv/bin:$PATH"
@@ -138,6 +178,7 @@ for required_var in "${required_vars[@]}"; do
   fi
 done
 
+start_ica_proxy
 prepare_config
 
 echo "================================="
@@ -148,6 +189,9 @@ echo " DB:     $LITELLM_ENABLE_DATABASE"
 echo " Host:   $LITELLM_HOST"
 echo " Port:   $LITELLM_PORT"
 echo " Logs:   $LOG_FILE"
+if truthy "$LITELLM_USE_ICA_PROXY"; then
+  echo " ICA:    $ICA_PROXY_BASE -> $ICA_BASE"
+fi
 echo "================================="
 
 nohup "$LITELLM_BIN" \

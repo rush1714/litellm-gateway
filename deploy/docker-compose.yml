@@ -30,6 +30,9 @@ services:
       LITELLM_CONFIG: /app/config/litellm.yaml
       LITELLM_RUNTIME_CONFIG: /tmp/litellm-runtime.yaml
       LITELLM_PORT: "${LITELLM_PORT:-4001}"
+      LITELLM_USE_ICA_PROXY: "${LITELLM_USE_ICA_PROXY:-true}"
+      ICA_PROXY_HOST: "127.0.0.1"
+      ICA_PROXY_PORT: "${ICA_PROXY_PORT:-4101}"
       DATABASE_URL: "${LITELLM_DOCKER_DATABASE_URL:-postgresql://litellm:litellm-change-me@postgres:5432/litellm?sslmode=disable}"
       NO_PROXY: "${NO_PROXY:-localhost,127.0.0.1,::1}"
       no_proxy: "${no_proxy:-localhost,127.0.0.1,::1}"

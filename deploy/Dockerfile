@@ -20,7 +20,9 @@ RUN prisma generate --schema=/app/.venv/lib/python3.12/site-packages/litellm/pro
 
 COPY config ./config
 COPY deploy/scripts/prepare-litellm-config.py ./deploy/scripts/prepare-litellm-config.py
+COPY deploy/scripts/ica-responses-proxy.py ./deploy/scripts/ica-responses-proxy.py
+COPY deploy/scripts/docker-entrypoint.sh ./deploy/scripts/docker-entrypoint.sh
 
 EXPOSE 4001
 
-CMD ["sh", "-c", "python /app/deploy/scripts/prepare-litellm-config.py ${LITELLM_CONFIG:-/app/config/litellm.yaml} ${LITELLM_RUNTIME_CONFIG:-/tmp/litellm-runtime.yaml} && exec litellm --config ${LITELLM_RUNTIME_CONFIG:-/tmp/litellm-runtime.yaml} --host 0.0.0.0 --port ${LITELLM_PORT:-4001}"]
+CMD ["sh", "/app/deploy/scripts/docker-entrypoint.sh"]
