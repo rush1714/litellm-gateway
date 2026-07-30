@@ -144,8 +144,20 @@ podman compose -f deploy/docker-compose.yml --env-file .env down
 - `ICA_PROXY_BASE`（例如 `http://127.0.0.1:4101`，供 YAML 中需要代理的模型显式引用）
 - `ICA_RESPONSES_API_VERSION`（默认 `2025-03-01-preview`）
 - `ICA_PROXY_HOST` / `ICA_PROXY_PORT`（默认 `127.0.0.1:${LITELLM_PORT + 100}`，例如 `4001 -> 4101`）
+- `OLLAMA_API_BASE`（本机 Ollama 地址，默认 `http://127.0.0.1:11434`）
+- `OLLAMA_DOCKER_API_BASE`（容器访问宿主机 Ollama 的地址，默认 `http://host.docker.internal:11434`）
 
 启动脚本在 `LITELLM_USE_ICA_PROXY=true` 时启动本地 ICA 代理。是否走代理由 YAML 显式决定：只有 `api_base: "os.environ/ICA_PROXY_BASE"` 的模型会走代理，其他模型继续使用 `api_base: "os.environ/ICA_BASE"`。代理只在 `/responses` 请求缺少 `api-version` 时追加 `ICA_RESPONSES_API_VERSION`，用于兼容 Claude Code 的 `/v1/messages` 到 OpenAI Responses API 转换；`/chat/completions` 会原样转发。
+
+本地 Ollama 模型使用 `local-*` 别名，需要先启动 Ollama 并下载对应模型：
+
+```bash
+ollama serve
+ollama pull qwen3:8b
+ollama pull qwen3:14b
+```
+
+`local-translator` 用于中英技术文档翻译；`local-qwen-14b` 和 `local-qwen3-14b` 适合高质量翻译与通用文本任务；`local-qwen-fast` 和 `local-qwen3-fast` 适合短文本和高吞吐翻译；`local-qwen-coder`、`local-qwen-coder-base` 和 `local-llama-8b` 用于本地代码或通用对话；`local-nomic-embed` 只用于 `/v1/embeddings`。
 
 当前配置包含 Claude-compatible 别名、按用途优化的自定义模型别名和 router fallback。模型来源与路由策略见 `docs/model-routing.md`。修改模型、上游或 fallback 时，优先改 `config/litellm.yaml`，然后重启服务。
 
@@ -163,6 +175,12 @@ podman compose -f deploy/docker-compose.yml --env-file .env down
 - `llama`：长引导任务与 OSS-style fallback
 - `granite`：小模型稳定 fallback
 - `gemma`：Gemma preview 试验别名
+- `local-translator`：本地中英技术翻译
+- `local-qwen-14b` / `local-qwen3-14b`：本地高质量翻译与通用任务
+- `local-qwen-fast` / `local-qwen3-fast`：本地快速短文本翻译
+- `local-qwen-coder` / `local-qwen-coder-base`：本地代码任务
+- `local-llama-8b`：本地通用对话
+- `local-nomic-embed`：本地 embedding
 
 ## 常用运维命令
 

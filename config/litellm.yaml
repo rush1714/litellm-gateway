@@ -96,6 +96,45 @@ model_list:
       model: openai/gemma-4-26b-a4b-it
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # Local Ollama models
+  ########################################################
+  - model_name: local-translator
+    litellm_params:
+      model: ollama/translator:latest
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-qwen-14b
+    litellm_params:
+      model: ollama/qwen2.5:14b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-qwen-fast
+    litellm_params:
+      model: ollama/qwen2.5:7b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-qwen-coder
+    litellm_params:
+      model: ollama/qwen2.5-coder:7b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-qwen-coder-base
+    litellm_params:
+      model: ollama/qwen2.5-coder:1.5b-base
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-llama-8b
+    litellm_params:
+      model: ollama/llama3.1:8b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-qwen3-fast
+    litellm_params:
+      model: ollama/qwen3:8b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-qwen3-14b
+    litellm_params:
+      model: ollama/qwen3:14b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-nomic-embed
+    litellm_params:
+      model: ollama/nomic-embed-text:latest
+      api_base: "os.environ/OLLAMA_API_BASE"
 ########################################################
 # Router
 ########################################################

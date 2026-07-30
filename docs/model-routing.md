@@ -25,6 +25,27 @@ The ICA compatibility proxy is opt-in per deployment and per model. Set `LITELLM
 | `llama` | `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` | Long guided tasks and OSS-style fallback. |
 | `granite` | `ibm/granite-4-h-small` | Small, stable, fast fallback. |
 | `gemma` | `gemma-4-26b-a4b-it` | Google/Gemma preview experimentation. |
+| `local-translator` | `ollama/translator:latest` | Local English-to-Chinese technical translation. |
+| `local-qwen-14b` | `ollama/qwen2.5:14b` | Local high-quality general translation and writing. |
+| `local-qwen-fast` | `ollama/qwen2.5:7b` | Local fast translation and short text. |
+| `local-qwen-coder` | `ollama/qwen2.5-coder:7b` | Local code generation and explanation. |
+| `local-qwen-coder-base` | `ollama/qwen2.5-coder:1.5b-base` | Local lightweight code completion. |
+| `local-llama-8b` | `ollama/llama3.1:8b` | Local general-purpose fallback. |
+| `local-qwen3-fast` | `ollama/qwen3:8b` | Local fast Qwen3 translation and general tasks. |
+| `local-qwen3-14b` | `ollama/qwen3:14b` | Local higher-quality Qwen3 translation and general tasks. |
+| `local-nomic-embed` | `ollama/nomic-embed-text:latest` | Local embedding requests only. |
+
+## Local Ollama configuration
+
+The `local-*` aliases require Ollama to be running and every referenced model to be pulled. Native launches use `OLLAMA_API_BASE=http://127.0.0.1:11434`. Compose uses `OLLAMA_DOCKER_API_BASE`, which defaults to `http://host.docker.internal:11434` so the container reaches the host's Ollama server.
+
+```bash
+ollama serve
+ollama pull qwen3:8b
+ollama pull qwen3:14b
+```
+
+`local-nomic-embed` supports `/v1/embeddings`; use the other local aliases with chat or completion endpoints.
 
 ## Fallback principles
 
