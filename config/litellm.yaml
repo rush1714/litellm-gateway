@@ -131,6 +131,38 @@ model_list:
     litellm_params:
       model: ollama/qwen3:14b
       api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-qwen3-4b
+    litellm_params:
+      model: ollama/qwen3:4b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-deepseek-coder-6-7b
+    litellm_params:
+      model: ollama/deepseek-coder:6.7b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-deepseek-r1-8b
+    litellm_params:
+      model: ollama/deepseek-r1:8b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-mistral-7b
+    litellm_params:
+      model: ollama/mistral:7b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-phi4
+    litellm_params:
+      model: ollama/phi4:latest
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-gemma3-12b
+    litellm_params:
+      model: ollama/gemma3:12b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-gemma4-12b
+    litellm_params:
+      model: ollama/gemma4:12b
+      api_base: "os.environ/OLLAMA_API_BASE"
+  - model_name: local-minicpm-v
+    litellm_params:
+      model: ollama/minicpm-v:latest
+      api_base: "os.environ/OLLAMA_API_BASE"
   - model_name: local-nomic-embed
     litellm_params:
       model: ollama/nomic-embed-text:latest

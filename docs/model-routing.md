@@ -33,6 +33,14 @@ The ICA compatibility proxy is opt-in per deployment and per model. Set `LITELLM
 | `local-llama-8b` | `ollama/llama3.1:8b` | Local general-purpose fallback. |
 | `local-qwen3-fast` | `ollama/qwen3:8b` | Local fast Qwen3 translation and general tasks. |
 | `local-qwen3-14b` | `ollama/qwen3:14b` | Local higher-quality Qwen3 translation and general tasks. |
+| `local-qwen3-4b` | `ollama/qwen3:4b` | Local lightweight long-context, tool, and reasoning tasks. |
+| `local-deepseek-coder-6-7b` | `ollama/deepseek-coder:6.7b` | Local code generation and explanation. |
+| `local-deepseek-r1-8b` | `ollama/deepseek-r1:8b` | Local reasoning and tool-capable tasks. |
+| `local-mistral-7b` | `ollama/mistral:7b` | Local general chat and tool-capable tasks. |
+| `local-phi4` | `ollama/phi4:latest` | Local higher-capability general reasoning and writing. |
+| `local-gemma3-12b` | `ollama/gemma3:12b` | Local long-context vision and general tasks. |
+| `local-gemma4-12b` | `ollama/gemma4:12b` | Local long-context multimodal, tool, and reasoning tasks. |
+| `local-minicpm-v` | `ollama/minicpm-v:latest` | Local image-understanding and multimodal tasks. |
 | `local-nomic-embed` | `ollama/nomic-embed-text:latest` | Local embedding requests only. |
 
 ## Local Ollama configuration
@@ -45,7 +53,7 @@ ollama pull qwen3:8b
 ollama pull qwen3:14b
 ```
 
-`local-nomic-embed` supports `/v1/embeddings`; use the other local aliases with chat or completion endpoints.
+`local-nomic-embed` supports `/v1/embeddings`. `local-gemma3-12b`, `local-gemma4-12b`, and `local-minicpm-v` support image input; `local-gemma4-12b` also supports audio input. `local-mistral-7b`, `local-deepseek-r1-8b`, `local-qwen3-4b`, and `local-gemma4-12b` support tool calls. Use the remaining local aliases with chat or completion endpoints.
 
 ## Fallback principles
 

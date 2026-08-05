@@ -157,7 +157,7 @@ ollama pull qwen3:8b
 ollama pull qwen3:14b
 ```
 
-`local-translator` 用于中英技术文档翻译；`local-qwen-14b` 和 `local-qwen3-14b` 适合高质量翻译与通用文本任务；`local-qwen-fast` 和 `local-qwen3-fast` 适合短文本和高吞吐翻译；`local-qwen-coder`、`local-qwen-coder-base` 和 `local-llama-8b` 用于本地代码或通用对话；`local-nomic-embed` 只用于 `/v1/embeddings`。
+`local-translator` 用于中英技术文档翻译；`local-qwen-14b` 和 `local-qwen3-14b` 适合高质量翻译与通用文本任务；`local-qwen-fast`、`local-qwen3-fast` 和 `local-qwen3-4b` 适合短文本或轻量任务；`local-qwen-coder`、`local-qwen-coder-base` 和 `local-deepseek-coder-6-7b` 用于本地代码任务；`local-deepseek-r1-8b`、`local-phi4`、`local-mistral-7b` 和 `local-llama-8b` 用于本地推理或通用对话；`local-gemma3-12b`、`local-gemma4-12b` 和 `local-minicpm-v` 用于图像理解等多模态任务；`local-nomic-embed` 只用于 `/v1/embeddings`。
 
 当前配置包含 Claude-compatible 别名、按用途优化的自定义模型别名和 router fallback。模型来源与路由策略见 `docs/model-routing.md`。修改模型、上游或 fallback 时，优先改 `config/litellm.yaml`，然后重启服务。
 
@@ -177,9 +177,10 @@ ollama pull qwen3:14b
 - `gemma`：Gemma preview 试验别名
 - `local-translator`：本地中英技术翻译
 - `local-qwen-14b` / `local-qwen3-14b`：本地高质量翻译与通用任务
-- `local-qwen-fast` / `local-qwen3-fast`：本地快速短文本翻译
-- `local-qwen-coder` / `local-qwen-coder-base`：本地代码任务
-- `local-llama-8b`：本地通用对话
+- `local-qwen-fast` / `local-qwen3-fast` / `local-qwen3-4b`：本地快速或轻量文本任务
+- `local-qwen-coder` / `local-qwen-coder-base` / `local-deepseek-coder-6-7b`：本地代码任务
+- `local-deepseek-r1-8b` / `local-phi4` / `local-mistral-7b` / `local-llama-8b`：本地推理或通用对话
+- `local-gemma3-12b` / `local-gemma4-12b` / `local-minicpm-v`：本地图像理解与多模态任务
 - `local-nomic-embed`：本地 embedding
 
 ## 常用运维命令
