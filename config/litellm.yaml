@@ -78,9 +78,27 @@ model_list:
       model: openai/gemini-3.5-flash
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
+  - model_name: gemini-best
+    litellm_params:
+      model: openai/gemini-3.6-flash
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
   - model_name: llama
     litellm_params:
       model: openai/meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
+  # Long-context IBM Consulting
+  ########################################################
+  - model_name: IBM-Consulting-Banking-BIAN-llama3.1-8b
+    litellm_params:
+      model: openai/BIAN-llama3.1-8b:260213_pad_free_assistant_only
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: IBM-Consulting-TMF-llama3.1-8b
+    litellm_params:
+      model: openai/TMF-llama3.1-8b:251028_no_sys_prompt
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
   ########################################################
@@ -177,33 +195,35 @@ router_settings:
     # Claude-compatible aliases
     - claude-sonnet-5:
         - claude-opus-4-8
-        - gpt-best
+        - gemini-best
         - gemini
         - llama
     - claude-sonnet-4-5:
-        - claude-sonnet-5
-        - gpt-best
+        - claude-opus-4-8
+        - gemini-best
         - gemini
+        - llama
     - claude-opus-4-8:
-        - gpt-best
-        - claude-sonnet-5
+        - gpt-coding
         - gemini
         - llama
     - claude-opus-4-5:
-        - claude-opus-4-8
         - gpt-coding
         - gemini
+        - llama
     - claude-haiku-4-5:
-        - gpt-fast
         - gemini-fast
         - granite
+        - llama
     # Custom aliases by intended use
     - gpt-best:
         - gpt-coding
+        - gemini-best
         - gemini
         - llama
     - gpt-coding:
         - gpt-best
+        - gemini-best
         - gemini
         - llama
     - gpt-fast:
@@ -211,27 +231,70 @@ router_settings:
         - granite
         - llama
     - gpt-multimodal:
-        - gpt-4o
         - gemini
         - gpt-best
-    - gpt-4o:
-        - gpt-multimodal
-        - gemini
-        - gpt-best
-    - gemini:
         - llama
-        - gpt-coding
+    - gpt-4o:
+        - gemini
         - gpt-best
+        - llama
+    - gemini:
+        - gemini-best
+        - llama
+        - gpt-best
+    - gemini-best:
+        - gemini
+        - gpt-best
+        - llama
     - gemini-fast:
         - gpt-fast
         - granite
+        - llama
     - llama:
         - gemini
         - gpt-coding
         - granite
+    - IBM-Consulting-Banking-BIAN-llama3.1-8b:
+        - llama
+        - gemini-best
+    - IBM-Consulting-TMF-llama3.1-8b:
+        - llama
+        - gemini-best
     - gemma:
+        - gemini-best
         - gemini-fast
         - granite
     - granite:
         - gpt-fast
+        - llama
+  context_window_fallbacks:
+    - claude-sonnet-5:
+        - gemini
+        - llama
+    - claude-sonnet-4-5:
+        - gemini
+        - llama
+    - claude-opus-4-8:
+        - gemini
+        - llama
+    - claude-opus-4-5:
+        - gemini
+        - llama
+    - gpt-best:
+        - gemini
+        - llama
+    - gpt-coding:
+        - gemini
+        - llama
+    - gpt-fast:
+        - gemini
+        - llama
+    - gemini-fast:
+        - gemini
+        - llama
+    - gemini-best:
+        - gemini
+        - llama
+    - granite:
+        - gemini
         - llama

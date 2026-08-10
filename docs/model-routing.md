@@ -22,7 +22,10 @@ The ICA compatibility proxy is opt-in per deployment and per model. Set `LITELLM
 | `gpt-4o` | `gpt-4o` | Direct GPT-4o alias. |
 | `gemini` | `gemini-3.1-pro-preview` | Long-context/pro analysis. |
 | `gemini-fast` | `gemini-3.5-flash` | Fast Gemini/global fallback. |
+| `gemini-best` | `gemini-3.6-flash` | Higher-capability Gemini fallback for general and coding tasks. |
 | `llama` | `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` | Long guided tasks and OSS-style fallback. |
+| `IBM-Consulting-Banking-BIAN-llama3.1-8b` | `BIAN-llama3.1-8b:260213_pad_free_assistant_only` | Banking BIAN domain-specialized tasks. |
+| `IBM-Consulting-TMF-llama3.1-8b` | `TMF-llama3.1-8b:251028_no_sys_prompt` | TM Forum domain-specialized tasks. |
 | `granite` | `ibm/granite-4-h-small` | Small, stable, fast fallback. |
 | `gemma` | `gemma-4-26b-a4b-it` | Google/Gemma preview experimentation. |
 | `local-translator` | `ollama/translator:latest` | Local English-to-Chinese technical translation. |
@@ -58,10 +61,13 @@ ollama pull qwen3:14b
 ## Fallback principles
 
 - Each user-facing alias is explicitly present in `model_list` so `/v1/models` shows the names clients should use.
-- Claude-compatible coding aliases prefer Terra/GPT-5.5 first, then Gemini/Llama for long-context recovery.
-- Fast aliases prefer Luna, Gemini Flash, then Granite.
-- Multimodal aliases prefer GPT-4o, then Gemini, then GPT-best.
-- Preview/experimental aliases have conservative fallbacks to stable fast models.
+- Fallback targets use distinct backing deployments; aliases that share an upstream model do not fall back to each other.
+- Claude-compatible aliases prefer GPT-5.5, Gemini 3.6 Flash, Gemini 3.1 Pro, then Llama; Opus aliases preserve a Terra-first fallback before the long-context models.
+- Fast aliases prefer Gemini 3.5 Flash, Granite, then Llama.
+- Multimodal aliases fall back to Gemini, GPT-best, then Llama; image capability must be validated against the selected upstream before use.
+- `context_window_fallbacks` handles only context-window errors for broad cloud aliases, routing to Gemini 3.1 Pro then Llama. It is deliberately not applied to local, embedding, or domain-specialized models.
+- IBM Consulting aliases only fall back outward to general-purpose models and are never candidates for unrelated aliases, preserving their domain-specific behavior.
+- Streaming fallback can occur only before output is emitted; a stream that has already delivered content preserves its original error instead of mixing model outputs.
 
 ## Health-check notes
 

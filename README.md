@@ -172,7 +172,10 @@ ollama pull qwen3:14b
 - `gpt-multimodal` / `gpt-4o`：多模态任务
 - `gemini`：长上下文分析
 - `gemini-fast`：快速 Gemini fallback
+- `gemini-best`：高能力 Gemini 通用与编码 fallback
 - `llama`：长引导任务与 OSS-style fallback
+- `IBM-Consulting-Banking-BIAN-llama3.1-8b`：银行 BIAN 领域任务
+- `IBM-Consulting-TMF-llama3.1-8b`：TM Forum 领域任务
 - `granite`：小模型稳定 fallback
 - `gemma`：Gemma preview 试验别名
 - `local-translator`：本地中英技术翻译
