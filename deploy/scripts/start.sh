@@ -93,6 +93,66 @@ prepare_config() {
   LITELLM_CONFIG="$RUNTIME_CONFIG"
 }
 
+ensure_prisma_engine_binary() {
+  # prisma-client-py generated client.py may reference BINARY_PATHS pointing to
+  # node_modules/prisma/query-engine-* while the actual binary lives under
+  # node_modules/@prisma/engines/query-engine-*.  Auto-create a symlink if needed.
+  resolve_python
+
+  # Find client.py and extract the expected binary path without importing prisma
+  local expected_path
+  expected_path=$("$PYTHON_BIN" -c "
+import re, platform
+from pathlib import Path
+
+# Locate the generated prisma/client.py
+try:
+    import prisma
+    client_py = Path(prisma.__file__).parent / 'client.py'
+except Exception:
+    exit(0)
+
+if not client_py.is_file():
+    exit(0)
+
+text = client_py.read_text()
+
+# Parse BINARY_PATHS dict from the generated file
+m = re.search(r\"BINARY_PATHS\s*=\s*model_parse\(BinaryPaths,\s*(\{.*?\})\)\", text, re.DOTALL)
+if not m:
+    exit(0)
+
+import ast
+paths_dict = ast.literal_eval(m.group(1))
+qe = paths_dict.get('queryEngine') or {}
+if not qe:
+    exit(0)
+
+uname = platform.uname()
+key = f'{uname.system.lower()}-{uname.machine}'
+print(qe.get(key) or next(iter(qe.values()), ''))
+" 2>/dev/null) || return 0
+  [[ -z "$expected_path" ]] && return 0
+
+  # If the expected path already exists, nothing to do
+  [[ -e "$expected_path" ]] && return 0
+
+  local expected_dir
+  expected_dir=$(dirname "$expected_path")
+  local engine_name
+  engine_name=$(basename "$expected_path")
+
+  # Look for the binary under @prisma/engines/ (sibling of prisma/)
+  local alt_path="$expected_dir/../@prisma/engines/$engine_name"
+
+  if [[ -x "$alt_path" ]]; then
+    echo "Auto-fix: creating symlink for Prisma query engine binary"
+    echo "  $expected_path -> $alt_path"
+    mkdir -p "$expected_dir"
+    ln -sf "$alt_path" "$expected_path"
+  fi
+}
+
 start_ica_proxy() {
   if ! truthy "$LITELLM_USE_ICA_PROXY"; then
     return
@@ -180,6 +240,7 @@ for required_var in "${required_vars[@]}"; do
 done
 
 start_ica_proxy
+ensure_prisma_engine_binary
 prepare_config
 
 echo "================================="
