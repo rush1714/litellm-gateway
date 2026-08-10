@@ -1,0 +1,83 @@
+# AGENTS.md
+
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+
+## Common commands
+
+```bash
+# Install/sync Python dependencies with uv
+uv sync
+make install
+
+# Start, inspect, and stop the local LiteLLM proxy
+make start
+make status
+make stop
+
+# Equivalent direct scripts
+./deploy/scripts/start.sh
+./deploy/scripts/status.sh
+./deploy/scripts/stop.sh
+
+# Run the Prisma/PostgreSQL connectivity check
+make prisma-check
+uv run python tools/check_prisma.py
+
+# Lint/format/review
+make lint
+make format
+make review
+make review-report
+make hooks-install
+
+# Podman/Docker Compose deployment helpers
+make docker-config
+make docker-up
+make docker-logs
+make docker-down
+```
+
+The project uses `uv` with `pyproject.toml` and `uv.lock`. Runtime dependencies are LiteLLM with its proxy extra, Prisma, python-dotenv, and PyYAML. Ruff is the development linter/formatter.
+
+## Commit and push workflow
+
+- Do not commit or push without confirmation. After code changes, present:
+  - summary of changed files,
+  - checks run and their results,
+  - proposed Conventional Commit message,
+  - exact `git commit` command,
+  - exact `make sync-branches` command for pushing `main` and syncing `dev`/`sit`.
+- After the user confirms, run the commit and branch sync flow automatically when the harness permits it. If the harness blocks push, ask the user to run the provided command.
+- Use Conventional Commits. Allowed types are `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `build`, `ci`, `perf`, `style`, `revert`, and `ops`.
+- If a review or security scan is meaningful, write a Markdown report under `docs/reports/` and mention whether it is committed.
+
+## Architecture overview
+
+This repository is an engineered deployment wrapper for a LiteLLM Gateway, not a custom application server.
+
+- `config/litellm.yaml` is the source LiteLLM proxy configuration. It reads `LITELLM_MASTER_KEY`, `DATABASE_URL`, `ICA_BASE`, and `ICA_KEY` from the environment and defines Codex-compatible aliases, best-use custom aliases, plus router settings. `docs/can-use-models-list.md` is the source model catalog; `docs/model-routing.md` documents the alias/fallback strategy. Preserve the existing alias intent unless the user asks to change routing.
+- `config/litellm.backup.yaml` is a historical/alternate LiteLLM config. Treat `config/litellm.yaml` as the source config; startup writes a generated runtime config under `logs/` or `/tmp`.
+- `.env` is committed as a placeholder environment template. Do not commit real local secrets; keep them in `.env.local` or another ignored file when needed. `LITELLM_ENABLE_DATABASE` controls whether startup keeps the LiteLLM `database_url` setting.
+- `deploy/scripts/start.sh` locates the repo root dynamically, resolves symlinks from `/Users/guobiao/bin`, loads `.env` without overriding explicit environment variables, prepares a runtime config with `deploy/scripts/prepare-litellm-config.py`, starts `litellm` on `LITELLM_HOST`/`LITELLM_PORT` (default `4001`), writes logs to `logs/litellm-$LITELLM_PORT.log`, and records `logs/litellm-$LITELLM_PORT.pid`.
+- `deploy/scripts/status.sh` reports the configured port state and calls `/health` and `/v1/models`. It uses `LITELLM_MASTER_KEY` from `.env` when available and does not contain a fallback secret.
+- `deploy/scripts/stop.sh` stops only the listener on the configured `LITELLM_PORT`; it does not kill from a stale PID file unless that process is actually listening on the target port.
+- `deploy/Dockerfile` and `deploy/docker-compose.yml` provide container deployment. Compose uses `.env`, exposes host `${LITELLM_PORT:-4001}` to the same container port, mounts `config/litellm.yaml` read-only, and includes a PostgreSQL service. `make docker-up` starts PostgreSQL only when `LITELLM_ENABLE_DATABASE` is enabled. `Makefile` prefers `podman compose` and falls back to `docker compose`.
+- `tools/check_prisma.py` is an async Prisma connectivity check. It loads `.env`, skips when `LITELLM_ENABLE_DATABASE=false`, reads `DATABASE_URL`, masks credentials in output, and runs `SELECT 1`.
+- `tools/quality_checks.py` provides fast hook/review checks and optional Markdown reports.
+- `docs/sql/litellm-usage-queries.sql` contains reporting queries for the LiteLLM PostgreSQL `"LiteLLM_SpendLogs"` table; camelCase columns such as `"startTime"` and `"endTime"` must be quoted.
+
+## OpenSpec workflow
+
+The repo includes OpenSpec configuration at `openspec/config.yaml` with `schema: spec-driven`, plus Codex commands/skills under `.Codex/commands/opsx/` and `.Codex/skills/`. For planned changes that should go through OpenSpec, use the existing `/opsx:*` commands or matching skills rather than hand-creating change artifacts.
+
+Useful OpenSpec CLI commands reflected by the local skill files:
+
+```bash
+openspec new change "<change-name>"
+openspec status --change "<change-name>" --json
+openspec instructions <artifact-id> --change "<change-name>" --json
+openspec instructions apply --change "<change-name>" --json
+openspec list --json
+```
+
+The OpenSpec skills emphasize using CLI-reported `planningHome`, `changeRoot`, `artifactPaths`, and `contextFiles` instead of assuming fixed artifact paths.
