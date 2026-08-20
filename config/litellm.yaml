@@ -45,26 +45,31 @@ model_list:
       model: openai/gpt-5.5-gus
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
+      context_window: 1050000
   - model_name: gpt-coding
     litellm_params:
       model: openai/gpt-5.6-terra-dzus
       api_base: "os.environ/ICA_PROXY_BASE"
       api_key: "os.environ/ICA_KEY"
+      context_window: 1050000
   - model_name: gpt-fast
     litellm_params:
       model: openai/gpt-5.6-luna-dzus
       api_base: "os.environ/ICA_PROXY_BASE"
       api_key: "os.environ/ICA_KEY"
+      context_window: 1050000
   - model_name: gpt-multimodal
     litellm_params:
       model: openai/gpt-4o
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
+      context_window: 1050000
   - model_name: gpt-4o
     litellm_params:
       model: openai/gpt-4o
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
+      context_window: 1050000
   ########################################################
   # Long-context and guided-task aliases
   ########################################################
