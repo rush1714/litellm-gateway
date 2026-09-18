@@ -13,3 +13,9 @@
 | (OpenAI Logo) | azure | OpenAI GPT-5.6 Luna<br>`gpt-5.6-luna-dzus` | USA | A lightweight, fast, and cost-efficient model for routine tasks and high-volume workloads | Active | Off |
 | (OpenAI Logo) | azure | OpenAI GPT-5.6 Terra<br>`gpt-5.6-terra-dzus` | USA | A balanced reasoning model optimized for everyday analysis, coding, and productivity | Active | Off |
 
+
+| (Gemini Logo) | gemini | Gemini 3.6 Flash<br>`gemini-3.6-flash` | — | Gemini 3.6 Flash | Active | Off |
+| (Gemini Logo) | gemini | Gemini 3.7 Flash<br>`gemini-3.7-flash` | — | Gemini 3.7 Flash | Active | Off |
+| (Mistral Logo) | mistral | Mistral Medium 2505<br>`mistral-medium-2505` | — | Mistral Medium 2505 | Active | Off |
+| (NVIDIA Logo) | nvidia | Nemotron 3.5 Lightning<br>`nvidia/nemotron-3.5-lightning` | — | Fast agent/execution model | Active | Off |
+| (Watsonx Logo) | watsonx | Llama 3.3 70B Instruct<br>`meta-llama/llama-3-3-70b-instruct` | — | General-purpose Llama fallback | Active | Off |

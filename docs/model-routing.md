@@ -28,6 +28,16 @@ The ICA compatibility proxy is opt-in per deployment and per model. Set `LITELLM
 | `IBM-Consulting-TMF-llama3.1-8b` | `TMF-llama3.1-8b:251028_no_sys_prompt` | TM Forum domain-specialized tasks. |
 | `granite` | `ibm/granite-4-h-small` | Small, stable, fast fallback. |
 | `gemma` | `gemma-4-26b-a4b-it` | Google/Gemma preview experimentation. |
+| `mistral-medium-2505` | `mistral-medium-2505` | Direct non-GPT/Claude coding and architecture model. |
+| `gemini-3.7-flash` | `gemini-3.7-flash` | Direct long-context non-GPT/Claude model for broad work. |
+| `nvidia/nemotron-3.5-lightning` | `nvidia/nemotron-3.5-lightning` | Direct fast agent/execution model. |
+| `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` | `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` | Direct Llama 4 Maverick fallback target. |
+| `meta-llama/llama-3-3-70b-instruct` | `meta-llama/llama-3-3-70b-instruct` | Direct Llama 3.3 writing and general fallback target. |
+| `code` | `mistral-medium-2505` | Code generation, debugging, tests, and implementation planning. |
+| `architect` | `mistral-medium-2505` | Architecture design and technical decision support. |
+| `proposal` | `gemini-3.7-flash` | Technical proposals, longer documents, and solution write-ups. |
+| `work-advice` | `gemini-3.7-flash` | Work recommendations, summaries, and non-code professional guidance. |
+| `fast-agent` | `nvidia/nemotron-3.5-lightning` | Fast agent-style execution and automation tasks. |
 | `local-translator` | `ollama/translator:latest` | Local English-to-Chinese technical translation. |
 | `local-qwen-14b` | `ollama/qwen2.5:14b` | Local high-quality general translation and writing. |
 | `local-qwen-fast` | `ollama/qwen2.5:7b` | Local fast translation and short text. |
@@ -65,7 +75,8 @@ ollama pull qwen3:14b
 - Claude-compatible aliases prefer GPT-5.5, Gemini 3.6 Flash, Gemini 3.1 Pro, then Llama; Opus aliases preserve a Terra-first fallback before the long-context models.
 - Fast aliases prefer Gemini 3.5 Flash, Granite, then Llama.
 - Multimodal aliases fall back to Gemini, GPT-best, then Llama; image capability must be validated against the selected upstream before use.
-- `context_window_fallbacks` handles only context-window errors for broad cloud aliases, routing to Gemini 3.1 Pro then Llama. It is deliberately not applied to local, embedding, or domain-specialized models.
+- Non-GPT/Claude role aliases are model-list entries whose primary upstream is the first model in the role strategy. Router fallbacks complete the requested order: `code` routes Mistral Medium -> Gemini 3.7 Flash -> Nemotron 3.5 Lightning; `architect` routes Mistral Medium -> Gemini 3.7 Flash -> Llama 4 Maverick; `proposal` and `work-advice` route Gemini 3.7 Flash -> Mistral Medium -> Llama 3.3 70B; `fast-agent` routes Nemotron 3.5 Lightning -> Gemini 3.7 Flash.
+- `context_window_fallbacks` handles only context-window errors for broad cloud aliases, routing to Gemini 3.1 Pro then Llama. New non-GPT/Claude role aliases with smaller or unknown context windows route to Gemini 3.7 Flash first for context-window errors. It is deliberately not applied to local, embedding, or domain-specialized models.
 - IBM Consulting aliases only fall back outward to general-purpose models and are never candidates for unrelated aliases, preserving their domain-specific behavior.
 - Streaming fallback can occur only before output is emitted; a stream that has already delivered content preserves its original error instead of mixing model outputs.
 

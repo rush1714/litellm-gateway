@@ -120,6 +120,62 @@ model_list:
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
   ########################################################
+  # Non-GPT/Claude role routing aliases
+  ########################################################
+  - model_name: mistral-medium-2505
+    litellm_params:
+      model: openai/mistral-medium-2505
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: gemini-3.7-flash
+    litellm_params:
+      model: openai/gemini-3.7-flash
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+      context_window: 1048576
+  - model_name: nvidia/nemotron-3.5-lightning
+    litellm_params:
+      model: openai/nvidia/nemotron-3.5-lightning
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+    litellm_params:
+      model: openai/meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: meta-llama/llama-3-3-70b-instruct
+    litellm_params:
+      model: openai/meta-llama/llama-3-3-70b-instruct
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: code
+    litellm_params:
+      model: openai/mistral-medium-2505
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: architect
+    litellm_params:
+      model: openai/mistral-medium-2505
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  - model_name: proposal
+    litellm_params:
+      model: openai/gemini-3.7-flash
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+      context_window: 1048576
+  - model_name: work-advice
+    litellm_params:
+      model: openai/gemini-3.7-flash
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+      context_window: 1048576
+  - model_name: fast-agent
+    litellm_params:
+      model: openai/nvidia/nemotron-3.5-lightning
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+  ########################################################
   # Local Ollama models
   ########################################################
   - model_name: local-translator
@@ -259,6 +315,21 @@ router_settings:
         - gemini
         - gpt-coding
         - granite
+    # Non-GPT/Claude role routing aliases
+    - code:
+        - gemini-3.7-flash
+        - nvidia/nemotron-3.5-lightning
+    - architect:
+        - gemini-3.7-flash
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+    - proposal:
+        - mistral-medium-2505
+        - meta-llama/llama-3-3-70b-instruct
+    - work-advice:
+        - mistral-medium-2505
+        - meta-llama/llama-3-3-70b-instruct
+    - fast-agent:
+        - gemini-3.7-flash
     - IBM-Consulting-Banking-BIAN-llama3.1-8b:
         - llama
         - gemini-best
@@ -303,3 +374,11 @@ router_settings:
     - granite:
         - gemini
         - llama
+    - code:
+        - gemini-3.7-flash
+        - nvidia/nemotron-3.5-lightning
+    - architect:
+        - gemini-3.7-flash
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+    - fast-agent:
+        - gemini-3.7-flash

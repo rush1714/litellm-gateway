@@ -178,6 +178,12 @@ ollama pull qwen3:14b
 - `IBM-Consulting-TMF-llama3.1-8b`：TM Forum 领域任务
 - `granite`：小模型稳定 fallback
 - `gemma`：Gemma preview 试验别名
+- `code`：代码生成、调试、测试与实现规划，优先 Mistral Medium，fallback 到 Gemini 3.7 Flash / Nemotron
+- `architect`：架构设计与技术决策，优先 Mistral Medium，fallback 到 Gemini 3.7 Flash / Llama 4 Maverick
+- `proposal`：技术方案和长文档输出，优先 Gemini 3.7 Flash，fallback 到 Mistral Medium / Llama 3.3 70B
+- `work-advice`：工作建议、总结和非代码专业建议，优先 Gemini 3.7 Flash，fallback 到 Mistral Medium / Llama 3.3 70B
+- `fast-agent`：快速 agent/自动化执行，优先 Nemotron 3.5 Lightning，fallback 到 Gemini 3.7 Flash
+- `mistral-medium-2505` / `gemini-3.7-flash` / `nvidia/nemotron-3.5-lightning`：可直接调用的非 GPT/Claude 上游模型别名
 - `local-translator`：本地中英技术翻译
 - `local-qwen-14b` / `local-qwen3-14b`：本地高质量翻译与通用任务
 - `local-qwen-fast` / `local-qwen3-fast` / `local-qwen3-4b`：本地快速或轻量文本任务
