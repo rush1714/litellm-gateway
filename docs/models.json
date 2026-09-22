@@ -1,0 +1,181 @@
+{
+    "data": [
+        {
+            "id": "gemma-4-26b-a4b-it",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai"
+        },
+        {
+            "id": "gemini-3.6-flash",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1048576,
+            "max_output_tokens": 65536
+        },
+        {
+            "id": "gemini-3.5-flash",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1048576,
+            "max_output_tokens": 65535
+        },
+        {
+            "id": "claude-sonnet-4-6",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1000000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "gpt-5.1",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 272000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "claude-opus-4-8",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1000000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "claude-sonnet-5",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1000000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "meta-llama/llama-3-3-70b-instruct",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai"
+        },
+        {
+            "id": "mistral-medium-2505",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai"
+        },
+        {
+            "id": "meta-llama/llama-4-maverick-17b-128e-instruct-fp8",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai"
+        },
+        {
+            "id": "claude-opus-5",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1000000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "ibm/granite-4-h-small",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "max_input_tokens": 20480,
+            "max_output_tokens": 20480
+        },
+        {
+            "id": "gpt-5.4",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1050000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "gpt-5.6-terra",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 922000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "gpt-5.6-sol",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 922000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "gemini-3.7-flash",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1048576,
+            "max_output_tokens": 65536
+        },
+        {
+            "id": "TMF-llama3.1-8b:251028_no_sys_prompt",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai"
+        },
+        {
+            "id": "nvidia/nemotron-3.5-lightning",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai"
+        },
+        {
+            "id": "BIAN-llama3.1-8b:260213_pad_free_assistant_only",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai"
+        },
+        {
+            "id": "claude-haiku-4-5",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 200000,
+            "max_output_tokens": 64000
+        },
+        {
+            "id": "claude-opus-4-6",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 1000000,
+            "max_output_tokens": 128000
+        },
+        {
+            "id": "gpt-5.6-luna",
+            "object": "model",
+            "created": 1677610602,
+            "owned_by": "openai",
+            "mode": "chat",
+            "max_input_tokens": 922000,
+            "max_output_tokens": 128000
+        }
+    ],
+    "object": "list"
+}

@@ -3,382 +3,327 @@ general_settings:
   database_url: "os.environ/DATABASE_URL"
   store_model_in_db: true
   store_prompts_in_spend_logs: true
+
 litellm_settings:
   drop_params: true
+
 ########################################################
-# Models
+# Models (Exact 1:1 original model IDs from models.json)
 ########################################################
 model_list:
+
   ########################################################
-  # Claude-compatible aliases for Claude Code clients
+  # ======================================================
+  # Gemini Models
+  # ======================================================
   ########################################################
-  - model_name: claude-sonnet-5
-    litellm_params:
-      model: openai/gpt-5.6-terra-dzus
-      api_base: "os.environ/ICA_PROXY_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: claude-sonnet-4-5
-    litellm_params:
-      model: openai/gpt-5.6-terra-dzus
-      api_base: "os.environ/ICA_PROXY_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: claude-opus-4-8
-    litellm_params:
-      model: openai/gpt-5.5-gus
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: claude-opus-4-5
-    litellm_params:
-      model: openai/gpt-5.5-gus
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: claude-haiku-4-5
-    litellm_params:
-      model: openai/gpt-5.6-luna-dzus
-      api_base: "os.environ/ICA_PROXY_BASE"
-      api_key: "os.environ/ICA_KEY"
-  ########################################################
-  # Best-use custom aliases from docs/can-use-models-list.md
-  ########################################################
-  - model_name: gpt-best
-    litellm_params:
-      model: openai/gpt-5.5-gus
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-      context_window: 1050000
-  - model_name: gpt-coding
-    litellm_params:
-      model: openai/gpt-5.6-terra-dzus
-      api_base: "os.environ/ICA_PROXY_BASE"
-      api_key: "os.environ/ICA_KEY"
-      context_window: 1050000
-  - model_name: gpt-fast
-    litellm_params:
-      model: openai/gpt-5.6-luna-dzus
-      api_base: "os.environ/ICA_PROXY_BASE"
-      api_key: "os.environ/ICA_KEY"
-      context_window: 1050000
-  - model_name: gpt-multimodal
-    litellm_params:
-      model: openai/gpt-4o
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-      context_window: 1050000
-  - model_name: gpt-4o
-    litellm_params:
-      model: openai/gpt-4o
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-      context_window: 1050000
-  ########################################################
-  # Long-context and guided-task aliases
-  ########################################################
-  - model_name: gemini
-    litellm_params:
-      model: openai/gemini-3.1-pro-preview
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: gemini-fast
-    litellm_params:
-      model: openai/gemini-3.5-flash
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: gemini-best
-    litellm_params:
-      model: openai/gemini-3.6-flash
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: llama
-    litellm_params:
-      model: openai/meta-llama/llama-4-maverick-17b-128e-instruct-fp8
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  ########################################################
-  # Long-context IBM Consulting
-  ########################################################
-  - model_name: IBM-Consulting-Banking-BIAN-llama3.1-8b
-    litellm_params:
-      model: openai/BIAN-llama3.1-8b:260213_pad_free_assistant_only
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: IBM-Consulting-TMF-llama3.1-8b
-    litellm_params:
-      model: openai/TMF-llama3.1-8b:251028_no_sys_prompt
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  ########################################################
-  # Small and preview model aliases
-  ########################################################
-  - model_name: granite
-    litellm_params:
-      model: openai/ibm/granite-4-h-small
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: gemma
-    litellm_params:
-      model: openai/gemma-4-26b-a4b-it
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  ########################################################
-  # Non-GPT/Claude role routing aliases
-  ########################################################
-  - model_name: mistral-medium-2505
-    litellm_params:
-      model: openai/mistral-medium-2505
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
+
   - model_name: gemini-3.7-flash
     litellm_params:
       model: openai/gemini-3.7-flash
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
       context_window: 1048576
+
+  - model_name: gemini-3.6-flash
+    litellm_params:
+      model: openai/gemini-3.6-flash
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+      context_window: 1048576
+
+  - model_name: gemini-3.5-flash
+    litellm_params:
+      model: openai/gemini-3.5-flash
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+      context_window: 1048576
+
+  ########################################################
+  # ======================================================
+  # Mistral Models
+  # ======================================================
+  ########################################################
+
+  - model_name: mistral-medium-2505
+    litellm_params:
+      model: openai/mistral-medium-2505
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+
+  ########################################################
+  # ======================================================
+  # NVIDIA Models
+  # ======================================================
+  ########################################################
+
   - model_name: nvidia/nemotron-3.5-lightning
     litellm_params:
       model: openai/nvidia/nemotron-3.5-lightning
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
+
+  ########################################################
+  # ======================================================
+  # Meta Llama Models
+  # ======================================================
+  ########################################################
+
   - model_name: meta-llama/llama-4-maverick-17b-128e-instruct-fp8
     litellm_params:
       model: openai/meta-llama/llama-4-maverick-17b-128e-instruct-fp8
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
+
   - model_name: meta-llama/llama-3-3-70b-instruct
     litellm_params:
       model: openai/meta-llama/llama-3-3-70b-instruct
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
-  - model_name: code
-    litellm_params:
-      model: openai/mistral-medium-2505
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: architect
-    litellm_params:
-      model: openai/mistral-medium-2505
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-  - model_name: proposal
-    litellm_params:
-      model: openai/gemini-3.7-flash
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-      context_window: 1048576
-  - model_name: work-advice
-    litellm_params:
-      model: openai/gemini-3.7-flash
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-      context_window: 1048576
-  - model_name: fast-agent
-    litellm_params:
-      model: openai/nvidia/nemotron-3.5-lightning
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
+
   ########################################################
-  # Local Ollama models
+  # ======================================================
+  # Google Gemma & IBM Granite Models
+  # ======================================================
   ########################################################
+
+  - model_name: gemma-4-26b-a4b-it
+    litellm_params:
+      model: openai/gemma-4-26b-a4b-it
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+
+  - model_name: ibm/granite-4-h-small
+    litellm_params:
+      model: openai/ibm/granite-4-h-small
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+      context_window: 20480
+
+  ########################################################
+  # ======================================================
+  # IBM Specialized Domain Models
+  # ======================================================
+  ########################################################
+
+  - model_name: BIAN-llama3.1-8b:260213_pad_free_assistant_only
+    litellm_params:
+      model: openai/BIAN-llama3.1-8b:260213_pad_free_assistant_only
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+
+  - model_name: TMF-llama3.1-8b:251028_no_sys_prompt
+    litellm_params:
+      model: openai/TMF-llama3.1-8b:251028_no_sys_prompt
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+
+  ########################################################
+  # ======================================================
+  # Local Ollama Models
+  # ======================================================
+  ########################################################
+
   - model_name: local-translator
     litellm_params:
       model: ollama/translator:latest
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-qwen-14b
     litellm_params:
       model: ollama/qwen2.5:14b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-qwen-fast
     litellm_params:
       model: ollama/qwen2.5:7b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-qwen-coder
     litellm_params:
       model: ollama/qwen2.5-coder:7b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-qwen-coder-base
     litellm_params:
       model: ollama/qwen2.5-coder:1.5b-base
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-llama-8b
     litellm_params:
       model: ollama/llama3.1:8b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-qwen3-fast
     litellm_params:
       model: ollama/qwen3:8b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-qwen3-14b
     litellm_params:
       model: ollama/qwen3:14b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-qwen3-4b
     litellm_params:
       model: ollama/qwen3:4b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-deepseek-coder-6-7b
     litellm_params:
       model: ollama/deepseek-coder:6.7b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-deepseek-r1-8b
     litellm_params:
       model: ollama/deepseek-r1:8b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-mistral-7b
     litellm_params:
       model: ollama/mistral:7b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-phi4
     litellm_params:
       model: ollama/phi4:latest
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-gemma3-12b
     litellm_params:
       model: ollama/gemma3:12b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-gemma4-12b
     litellm_params:
       model: ollama/gemma4:12b
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-minicpm-v
     litellm_params:
       model: ollama/minicpm-v:latest
       api_base: "os.environ/OLLAMA_API_BASE"
+
   - model_name: local-nomic-embed
     litellm_params:
       model: ollama/nomic-embed-text:latest
       api_base: "os.environ/OLLAMA_API_BASE"
+
 ########################################################
 # Router
 ########################################################
 router_settings:
   num_retries: 2
   timeout: 180
+
+  ######################################################
+  # Service / Error Fallbacks (Using exact model IDs)
+  ######################################################
   fallbacks:
-    # Claude-compatible aliases
-    - claude-sonnet-5:
-        - claude-opus-4-8
-        - gemini-best
-        - gemini
-        - llama
-    - claude-sonnet-4-5:
-        - claude-opus-4-8
-        - gemini-best
-        - gemini
-        - llama
-    - claude-opus-4-8:
-        - gpt-coding
-        - gemini
-        - llama
-    - claude-opus-4-5:
-        - gpt-coding
-        - gemini
-        - llama
-    - claude-haiku-4-5:
-        - gemini-fast
-        - granite
-        - llama
-    # Custom aliases by intended use
-    - gpt-best:
-        - gpt-coding
-        - gemini-best
-        - gemini
-        - llama
-    - gpt-coding:
-        - gpt-best
-        - gemini-best
-        - gemini
-        - llama
-    - gpt-fast:
-        - gemini-fast
-        - granite
-        - llama
-    - gpt-multimodal:
-        - gemini
-        - gpt-best
-        - llama
-    - gpt-4o:
-        - gemini
-        - gpt-best
-        - llama
-    - gemini:
-        - gemini-best
-        - llama
-        - gpt-best
-    - gemini-best:
-        - gemini
-        - gpt-best
-        - llama
-    - gemini-fast:
-        - gpt-fast
-        - granite
-        - llama
-    - llama:
-        - gemini
-        - gpt-coding
-        - granite
-    # Non-GPT/Claude role routing aliases
-    - code:
-        - gemini-3.7-flash
-        - nvidia/nemotron-3.5-lightning
-    - architect:
-        - gemini-3.7-flash
+
+    # ==================================================
+    # Gemini Models
+    # ==================================================
+    - gemini-3.7-flash:
+        - mistral-medium-2505
+        - gemini-3.6-flash
         - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
-    - proposal:
-        - mistral-medium-2505
         - meta-llama/llama-3-3-70b-instruct
-    - work-advice:
-        - mistral-medium-2505
-        - meta-llama/llama-3-3-70b-instruct
-    - fast-agent:
+
+    - gemini-3.6-flash:
         - gemini-3.7-flash
-    - IBM-Consulting-Banking-BIAN-llama3.1-8b:
-        - llama
-        - gemini-best
-    - IBM-Consulting-TMF-llama3.1-8b:
-        - llama
-        - gemini-best
-    - gemma:
-        - gemini-best
-        - gemini-fast
-        - granite
-    - granite:
-        - gpt-fast
-        - llama
+        - mistral-medium-2505
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+
+    - gemini-3.5-flash:
+        - gemini-3.6-flash
+        - nvidia/nemotron-3.5-lightning
+        - gemma-4-26b-a4b-it
+        - ibm/granite-4-h-small
+
+    # ==================================================
+    # Mistral Medium
+    # ==================================================
+    - mistral-medium-2505:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+
+    # ==================================================
+    # NVIDIA Nemotron
+    # ==================================================
+    - nvidia/nemotron-3.5-lightning:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+        - gemini-3.5-flash
+
+    # ==================================================
+    # Meta Llama Models
+    # ==================================================
+    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
+        - gemini-3.7-flash
+        - mistral-medium-2505
+        - gemini-3.6-flash
+
+    - meta-llama/llama-3-3-70b-instruct:
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    # ==================================================
+    # Small & Preview Models
+    # ==================================================
+    - gemma-4-26b-a4b-it:
+        - gemini-3.5-flash
+        - nvidia/nemotron-3.5-lightning
+        - ibm/granite-4-h-small
+
+    - ibm/granite-4-h-small:
+        - gemini-3.5-flash
+        - nvidia/nemotron-3.5-lightning
+
+    # ==================================================
+    # IBM Specialized Domain Models
+    # ==================================================
+    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - TMF-llama3.1-8b:251028_no_sys_prompt:
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+  ######################################################
+  # Context Window Fallbacks (Route small context -> 1M Gemini)
+  ######################################################
   context_window_fallbacks:
-    - claude-sonnet-5:
-        - gemini
-        - llama
-    - claude-sonnet-4-5:
-        - gemini
-        - llama
-    - claude-opus-4-8:
-        - gemini
-        - llama
-    - claude-opus-4-5:
-        - gemini
-        - llama
-    - gpt-best:
-        - gemini
-        - llama
-    - gpt-coding:
-        - gemini
-        - llama
-    - gpt-fast:
-        - gemini
-        - llama
-    - gemini-fast:
-        - gemini
-        - llama
-    - gemini-best:
-        - gemini
-        - llama
-    - granite:
-        - gemini
-        - llama
-    - code:
+
+    - mistral-medium-2505:
         - gemini-3.7-flash
-        - nvidia/nemotron-3.5-lightning
-    - architect:
+        - gemini-3.6-flash
+
+    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
         - gemini-3.7-flash
-        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
-    - fast-agent:
+        - gemini-3.6-flash
+
+    - meta-llama/llama-3-3-70b-instruct:
         - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - gemma-4-26b-a4b-it:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - ibm/granite-4-h-small:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - TMF-llama3.1-8b:251028_no_sys_prompt:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
