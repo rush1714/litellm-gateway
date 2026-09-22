@@ -41,6 +41,18 @@ model_list:
 
   ########################################################
   # ======================================================
+  # Mistral Models
+  # ======================================================
+  ########################################################
+
+  - model_name: mistral-medium-2505
+    litellm_params:
+      model: openai/mistral-medium-2505
+      api_base: "os.environ/ICA_BASE"
+      api_key: "os.environ/ICA_KEY"
+
+  ########################################################
+  # ======================================================
   # NVIDIA Models
   # ======================================================
   ########################################################
@@ -213,19 +225,29 @@ router_settings:
     # Gemini Models
     # ==================================================
     - gemini-3.7-flash:
+        - mistral-medium-2505
         - gemini-3.6-flash
-        - gemini-3.5-flash
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
         - meta-llama/llama-3-3-70b-instruct
 
     - gemini-3.6-flash:
         - gemini-3.7-flash
-        - gemini-3.5-flash
+        - mistral-medium-2505
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
 
     - gemini-3.5-flash:
         - gemini-3.6-flash
         - nvidia/nemotron-3.5-lightning
         - gemma-4-26b-a4b-it
         - ibm/granite-4-h-small
+
+    # ==================================================
+    # Mistral Medium
+    # ==================================================
+    - mistral-medium-2505:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
 
     # ==================================================
     # NVIDIA Nemotron
@@ -240,13 +262,13 @@ router_settings:
     # ==================================================
     - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
         - gemini-3.7-flash
+        - mistral-medium-2505
         - gemini-3.6-flash
-        - gemini-3.5-flash
 
     - meta-llama/llama-3-3-70b-instruct:
+        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
         - gemini-3.7-flash
         - gemini-3.6-flash
-        - gemini-3.5-flash
 
     # ==================================================
     # Small & Preview Models
@@ -277,6 +299,10 @@ router_settings:
   # Context Window Fallbacks (Route small context -> 1M Gemini)
   ######################################################
   context_window_fallbacks:
+
+    - mistral-medium-2505:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
 
     - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
         - gemini-3.7-flash
