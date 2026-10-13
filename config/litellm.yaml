@@ -111,16 +111,9 @@ model_list:
   # Zhipu GLM Models
   # ======================================================
   ########################################################
-
-  - model_name: glm-5.3
-    litellm_params:
-      model: openai/glm-5.3
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-
   - model_name: GLM-5.3
     litellm_params:
-      model: openai/glm-5.3
+      model: openai/rits/zai-org/glm-5-3
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
 
@@ -218,104 +211,104 @@ model_list:
 ########################################################
 # Router
 ########################################################
-router_settings:
-  num_retries: 2
-  timeout: 180
-
-  ######################################################
-  # Service / Error Fallbacks (Using exact model IDs)
-  ######################################################
-  fallbacks:
-
-    # ==================================================
-    # Gemini Models
-    # ==================================================
-    - gemini-3.7-flash:
-        - gemini-3.6-flash
-        - gemini-3.5-flash
-        - meta-llama/llama-3-3-70b-instruct
-
-    - gemini-3.6-flash:
-        - gemini-3.7-flash
-        - gemini-3.5-flash
-
-    - gemini-3.5-flash:
-        - gemini-3.6-flash
-        - nvidia/nemotron-3.5-lightning
-        - gemma-4-26b-a4b-it
-        - ibm/granite-4-h-small
-
-    # ==================================================
-    # NVIDIA Nemotron
-    # ==================================================
-    - nvidia/nemotron-3.5-lightning:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-        - gemini-3.5-flash
-
-    # ==================================================
-    # Meta Llama Models
-    # ==================================================
-    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-        - gemini-3.5-flash
-
-    - meta-llama/llama-3-3-70b-instruct:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-        - gemini-3.5-flash
-
-    # ==================================================
-    # Small & Preview Models
-    # ==================================================
-    - gemma-4-26b-a4b-it:
-        - gemini-3.5-flash
-        - nvidia/nemotron-3.5-lightning
-        - ibm/granite-4-h-small
-
-    - ibm/granite-4-h-small:
-        - gemini-3.5-flash
-        - nvidia/nemotron-3.5-lightning
-
-    # ==================================================
-    # IBM Specialized Domain Models
-    # ==================================================
-    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
-        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - TMF-llama3.1-8b:251028_no_sys_prompt:
-        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-  ######################################################
-  # Context Window Fallbacks (Route small context -> 1M Gemini)
-  ######################################################
-  context_window_fallbacks:
-
-    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - meta-llama/llama-3-3-70b-instruct:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - gemma-4-26b-a4b-it:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - ibm/granite-4-h-small:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - TMF-llama3.1-8b:251028_no_sys_prompt:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
+#router_settings:
+#  num_retries: 2
+#  timeout: 180
+#
+#  ######################################################
+#  # Service / Error Fallbacks (Using exact model IDs)
+#  ######################################################
+#  fallbacks:
+#
+#    # ==================================================
+#    # Gemini Models
+#    # ==================================================
+#    - gemini-3.7-flash:
+#        - gemini-3.6-flash
+#        - gemini-3.5-flash
+#        - meta-llama/llama-3-3-70b-instruct
+#
+#    - gemini-3.6-flash:
+#        - gemini-3.7-flash
+#        - gemini-3.5-flash
+#
+#    - gemini-3.5-flash:
+#        - gemini-3.6-flash
+#        - nvidia/nemotron-3.5-lightning
+#        - gemma-4-26b-a4b-it
+#        - ibm/granite-4-h-small
+#
+#    # ==================================================
+#    # NVIDIA Nemotron
+#    # ==================================================
+#    - nvidia/nemotron-3.5-lightning:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#        - gemini-3.5-flash
+#
+#    # ==================================================
+#    # Meta Llama Models
+#    # ==================================================
+#    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#        - gemini-3.5-flash
+#
+#    - meta-llama/llama-3-3-70b-instruct:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#        - gemini-3.5-flash
+#
+#    # ==================================================
+#    # Small & Preview Models
+#    # ==================================================
+#    - gemma-4-26b-a4b-it:
+#        - gemini-3.5-flash
+#        - nvidia/nemotron-3.5-lightning
+#        - ibm/granite-4-h-small
+#
+#    - ibm/granite-4-h-small:
+#        - gemini-3.5-flash
+#        - nvidia/nemotron-3.5-lightning
+#
+#    # ==================================================
+#    # IBM Specialized Domain Models
+#    # ==================================================
+#    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
+#        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#
+#    - TMF-llama3.1-8b:251028_no_sys_prompt:
+#        - meta-llama/llama-4-maverick-17b-128e-instruct-fp8
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#
+#  ######################################################
+#  # Context Window Fallbacks (Route small context -> 1M Gemini)
+#  ######################################################
+#  context_window_fallbacks:
+#
+#    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#
+#    - meta-llama/llama-3-3-70b-instruct:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#
+#    - gemma-4-26b-a4b-it:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#
+#    - ibm/granite-4-h-small:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#
+#    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
+#
+#    - TMF-llama3.1-8b:251028_no_sys_prompt:
+#        - gemini-3.7-flash
+#        - gemini-3.6-flash
