@@ -19,3 +19,4 @@
 | (Mistral Logo) | mistral | Mistral Medium 2505<br>`mistral-medium-2505` | — | Mistral Medium 2505 | Active | Off |
 | (NVIDIA Logo) | nvidia | Nemotron 3.5 Lightning<br>`nvidia/nemotron-3.5-lightning` | — | Fast agent/execution model | Active | Off |
 | (Watsonx Logo) | watsonx | Llama 3.3 70B Instruct<br>`meta-llama/llama-3-3-70b-instruct` | — | General-purpose Llama fallback | Active | Off |
+| (Zhipu Logo) | zhipu | GLM 5.3<br>`glm-5.3` | — | Advanced bilingual reasoning and coding model | Active | Off |

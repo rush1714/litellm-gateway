@@ -33,6 +33,7 @@ The ICA compatibility proxy is opt-in per deployment and per model. Set `LITELLM
 | `nvidia/nemotron-3.5-lightning` | `nvidia/nemotron-3.5-lightning` | Direct fast agent/execution model. |
 | `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` | `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` | Direct Llama 4 Maverick fallback target. |
 | `meta-llama/llama-3-3-70b-instruct` | `meta-llama/llama-3-3-70b-instruct` | Direct Llama 3.3 writing and general fallback target. |
+| `glm-5.3` | `glm-5.3` | Direct Zhipu GLM-5.3 bilingual reasoning and coding model. |
 | `code` | `mistral-medium-2505` | Code generation, debugging, tests, and implementation planning. |
 | `architect` | `mistral-medium-2505` | Architecture design and technical decision support. |
 | `proposal` | `gemini-3.7-flash` | Technical proposals, longer documents, and solution write-ups. |
