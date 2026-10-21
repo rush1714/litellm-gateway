@@ -5,9 +5,118 @@ general_settings:
   store_prompts_in_spend_logs: true
   disable_env_credential_login: true
 router_settings:
+  routing_strategy: simple-shuffle
+  num_retries: 2
+  timeout: 180
   redis_host: "os.environ/REDIS_HOST"
   redis_port: "os.environ/REDIS_PORT"
   redis_password: "os.environ/REDIS_PASSWORD"
+
+  ######################################################
+  # Service / Error Fallbacks (Using exact model IDs)
+  ######################################################
+  fallbacks:
+
+    # ==================================================
+    # Gemini Models (Mainline)
+    # ==================================================
+    - gemini-3.7-flash:
+        - gemini-3.6-flash
+        - gemini-3.5-flash
+        - GLM-5.3
+
+    - gemini-3.6-flash:
+        - gemini-3.7-flash
+        - gemini-3.5-flash
+        - GLM-5.3
+
+    - gemini-3.5-flash:
+        - gemini-3.6-flash
+        - gemini-3.7-flash
+        - GLM-5.3
+
+    # ==================================================
+    # Zhipu GLM Models (Mainline)
+    # ==================================================
+    - GLM-5.3:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+        - gemini-3.5-flash
+
+    # ==================================================
+    # NVIDIA Nemotron
+    # ==================================================
+    - nvidia/nemotron-3.5-lightning:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+        - GLM-5.3
+
+    # ==================================================
+    # Meta Llama Models
+    # ==================================================
+    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+        - GLM-5.3
+
+    - meta-llama/llama-3-3-70b-instruct:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+        - GLM-5.3
+
+    # ==================================================
+    # Small & Preview Models
+    # ==================================================
+    - gemma-4-26b-a4b-it:
+        - gemini-3.5-flash
+        - gemini-3.7-flash
+        - GLM-5.3
+
+    - ibm/granite-4-h-small:
+        - gemini-3.5-flash
+        - GLM-5.3
+
+    # ==================================================
+    # IBM Specialized Domain Models
+    # ==================================================
+    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
+        - GLM-5.3
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - TMF-llama3.1-8b:251028_no_sys_prompt:
+        - GLM-5.3
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+  ######################################################
+  # Context Window Fallbacks (Route small context -> 1M Gemini)
+  ######################################################
+  context_window_fallbacks:
+
+    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - meta-llama/llama-3-3-70b-instruct:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - gemma-4-26b-a4b-it:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - ibm/granite-4-h-small:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
+
+    - TMF-llama3.1-8b:251028_no_sys_prompt:
+        - gemini-3.7-flash
+        - gemini-3.6-flash
 litellm_settings:
   drop_params: true
   use_chat_completions_url_for_anthropic_messages: true
@@ -17,6 +126,7 @@ litellm_settings:
     host: "os.environ/REDIS_HOST"
     port: "os.environ/REDIS_PORT"
     password: "os.environ/REDIS_PASSWORD"
+    namespace: "litellm.caching.caching"
 
 ########################################################
 # Models (Exact 1:1 original model IDs from models.json)
