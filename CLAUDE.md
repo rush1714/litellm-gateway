@@ -23,6 +23,10 @@ make stop
 make prisma-check
 uv run python tools/check_prisma.py
 
+# Run the Redis connectivity check
+make redis-check
+uv run python tools/check_redis.py
+
 # Lint/format/review
 make lint
 make format
@@ -55,9 +59,9 @@ The project uses `uv` with `pyproject.toml` and `uv.lock`. Runtime dependencies 
 
 This repository is an engineered deployment wrapper for a LiteLLM Gateway, not a custom application server.
 
-- `config/litellm.yaml` is the source LiteLLM proxy configuration. It reads `LITELLM_MASTER_KEY`, `DATABASE_URL`, `ICA_BASE`, and `ICA_KEY` from the environment and defines Claude-compatible aliases, best-use custom aliases, plus router settings. `docs/can-use-models-list.md` is the source model catalog; `docs/model-routing.md` documents the alias/fallback strategy. Preserve the existing alias intent unless the user asks to change routing.
+- `config/litellm.yaml` is the source LiteLLM proxy configuration. It reads `LITELLM_MASTER_KEY`, `DATABASE_URL`, `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`, `ICA_BASE`, and `ICA_KEY` from the environment and defines Claude-compatible aliases, best-use custom aliases, plus router settings. `docs/can-use-models-list.md` is the source model catalog; `docs/model-routing.md` documents the alias/fallback strategy. Preserve the existing alias intent unless the user asks to change routing.
 - `config/litellm.backup.yaml` is a historical/alternate LiteLLM config. Treat `config/litellm.yaml` as the source config; startup writes a generated runtime config under `logs/` or `/tmp`.
-- `.env` is committed as a placeholder environment template. Do not commit real local secrets; keep them in `.env.local` or another ignored file when needed. `LITELLM_ENABLE_DATABASE` controls whether startup keeps the LiteLLM `database_url` setting.
+- `.env` is committed as a placeholder environment template. Do not commit real local secrets; keep them in `.env.local` or another ignored file when needed. `LITELLM_ENABLE_DATABASE` controls whether startup keeps the LiteLLM `database_url` setting. `LITELLM_ENABLE_REDIS` controls whether startup keeps the Redis router and response caching settings.
 - `deploy/scripts/start.sh` locates the repo root dynamically, resolves symlinks from `/Users/guobiao/bin`, loads `.env` without overriding explicit environment variables, prepares a runtime config with `deploy/scripts/prepare-litellm-config.py`, starts `litellm` on `LITELLM_HOST`/`LITELLM_PORT` (default `4001`), writes logs to `logs/litellm-$LITELLM_PORT.log`, and records `logs/litellm-$LITELLM_PORT.pid`.
 - `deploy/scripts/status.sh` reports the configured port state and calls `/health` and `/v1/models`. It uses `LITELLM_MASTER_KEY` from `.env` when available and does not contain a fallback secret.
 - `deploy/scripts/stop.sh` stops only the listener on the configured `LITELLM_PORT`; it does not kill from a stale PID file unless that process is actually listening on the target port.

@@ -96,6 +96,16 @@ else
 fi
 
 echo ""
+echo "[Redis]"
+REDIS_HOST="${REDIS_HOST:-127.0.0.1}"
+REDIS_PORT="${REDIS_PORT:-6379}"
+if command -v nc >/dev/null 2>&1 && nc -z -w 1 "$REDIS_HOST" "$REDIS_PORT" >/dev/null 2>&1; then
+  echo "reachable on $REDIS_HOST:$REDIS_PORT"
+else
+  echo "not reachable on $REDIS_HOST:$REDIS_PORT"
+fi
+
+echo ""
 echo "[Health]"
 if [[ ${#auth_args[@]} -gt 0 ]]; then
   health_response=$(curl -fsS "$BASE_URL/health" "${auth_args[@]}" || true)

@@ -35,12 +35,16 @@ services:
       ICA_PROXY_PORT: "${ICA_PROXY_PORT:-4101}"
       OLLAMA_API_BASE: "${OLLAMA_DOCKER_API_BASE:-http://host.docker.internal:11434}"
       DATABASE_URL: "${LITELLM_DOCKER_DATABASE_URL:-postgresql://litellm:litellm-change-me@postgres:5432/litellm?sslmode=disable}"
+      REDIS_HOST: "${LITELLM_DOCKER_REDIS_HOST:-host.docker.internal}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
       NO_PROXY: "${NO_PROXY:-localhost,127.0.0.1,::1}"
       no_proxy: "${no_proxy:-localhost,127.0.0.1,::1}"
     ports:
       - "${LITELLM_PORT:-4001}:${LITELLM_PORT:-4001}"
     extra_hosts:
       - "litellm.top:host-gateway"
+      - "host.docker.internal:host-gateway"
     volumes:
       - ../config/litellm.yaml:/app/config/litellm.yaml:ro
     restart: unless-stopped
