@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import os
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -112,6 +113,18 @@ def main() -> int:
 
     with patched_env(ICA_PROXY_TARGET_BASE=""):
         assert_proxy_error("/responses", 500, "ICA_PROXY_TARGET_BASE is required")
+
+    assert proxy.sanitize_body(None) is None
+    assert proxy.sanitize_body(b"") == b""
+    assert proxy.sanitize_body(b'{"key": "value"}') == b'{"key": "value"}'
+    assert proxy.sanitize_body(b"not json") == b"not json"
+    assert proxy.sanitize_body(b'["list"]') == b'["list"]'
+    sanitized = proxy.sanitize_body(
+        b'{"model": "gemini-3.7-flash", "prompt_cache_key": "user_123", "stream": true}'
+    )
+    parsed = json.loads(sanitized.decode("utf-8"))
+    assert parsed == {"model": "gemini-3.7-flash", "stream": True}
+    assert "prompt_cache_key" not in parsed
 
     print("ICA responses proxy tests passed")
     return 0

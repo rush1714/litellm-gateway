@@ -163,6 +163,10 @@ start_ica_proxy() {
     return
   fi
 
+  export ICA_PROXY_TARGET_BASE="$ICA_BASE"
+  export ICA_PROXY_BASE
+  export ICA_BASE="$ICA_PROXY_BASE"
+
   if command -v lsof >/dev/null 2>&1; then
     local existing_pid
     existing_pid=$(lsof -tiTCP:"$ICA_PROXY_PORT" -sTCP:LISTEN || true)
@@ -173,8 +177,6 @@ start_ica_proxy() {
   fi
 
   resolve_python
-  export ICA_PROXY_TARGET_BASE="$ICA_BASE"
-  export ICA_PROXY_BASE
   nohup "$PYTHON_BIN" "$ROOT_DIR/deploy/scripts/ica-responses-proxy.py" \
     > "$ICA_PROXY_LOG_FILE" 2>&1 &
   echo $! > "$ICA_PROXY_PID_FILE"
@@ -199,6 +201,7 @@ PID_FILE="${PID_FILE:-$LOG_DIR/litellm-$LITELLM_PORT.pid}"
 ICA_PROXY_LOG_FILE="${ICA_PROXY_LOG_FILE:-$LOG_DIR/ica-proxy-$ICA_PROXY_PORT.log}"
 ICA_PROXY_PID_FILE="${ICA_PROXY_PID_FILE:-$LOG_DIR/ica-proxy-$ICA_PROXY_PORT.pid}"
 export ICA_PROXY_BASE ICA_RESPONSES_API_VERSION OLLAMA_API_BASE
+export LITELLM_USE_CHAT_COMPLETIONS_URL_FOR_ANTHROPIC_MESSAGES="${LITELLM_USE_CHAT_COMPLETIONS_URL_FOR_ANTHROPIC_MESSAGES:-true}"
 
 if [[ -d "$ROOT_DIR/.venv/bin" ]]; then
   export PATH="$ROOT_DIR/.venv/bin:$PATH"
@@ -252,7 +255,7 @@ echo " Host:   $LITELLM_HOST"
 echo " Port:   $LITELLM_PORT"
 echo " Logs:   $LOG_FILE"
 if truthy "$LITELLM_USE_ICA_PROXY"; then
-  echo " ICA:    $ICA_PROXY_BASE -> $ICA_BASE"
+  echo " ICA:    $ICA_BASE -> $ICA_PROXY_TARGET_BASE"
 fi
 echo "================================="
 

@@ -38,6 +38,19 @@ def header_tokens(value: str | None) -> set[str]:
     return {token.strip().lower() for token in value.split(",") if token.strip()}
 
 
+def sanitize_body(body: bytes | None) -> bytes | None:
+    if not body or b"prompt_cache_key" not in body:
+        return body
+    try:
+        data = json.loads(body.decode("utf-8"))
+        if isinstance(data, dict) and "prompt_cache_key" in data:
+            data.pop("prompt_cache_key", None)
+            return json.dumps(data).encode("utf-8")
+    except Exception:
+        pass
+    return body
+
+
 def is_responses_api_path(path: str) -> bool:
     """Return true when /responses is a path segment, not a substring."""
     request = urlsplit(path)
@@ -130,7 +143,7 @@ class ICAResponsesProxy(BaseHTTPRequestHandler):
         conn: http.client.HTTPConnection | None = None
         response_started = False
         try:
-            body = self.read_body()
+            body = sanitize_body(self.read_body())
             target_url = self.build_target_url()
             target = urlsplit(target_url)
             headers = self.build_headers(target, body)

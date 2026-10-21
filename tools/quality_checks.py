@@ -114,7 +114,7 @@ def read_worktree(path: str) -> str | None:
 
 
 def normalize_match(value: str) -> str:
-    return value.strip().strip('"\'')
+    return value.strip().strip("\"'")
 
 
 def check_blocked_staged(files: list[str]) -> CheckResult:
