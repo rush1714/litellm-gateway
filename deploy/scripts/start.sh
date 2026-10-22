@@ -9,13 +9,11 @@ while [[ -L "$SOURCE" ]]; do
 done
 SCRIPT_DIR=$(cd -P "$(dirname "$SOURCE")" && pwd)
 ROOT_DIR=$(cd "$SCRIPT_DIR/../.." && pwd)
-ENV_FILE="${ENV_FILE:-$ROOT_DIR/.env}"
+ENV_FILE="${ENV_FILE:-}"
 
-load_env() {
-  if [[ ! -f "$ENV_FILE" ]]; then
-    echo "WARNING: $ENV_FILE not found. Create .env from the committed placeholder and fill in values."
-    return
-  fi
+load_env_file() {
+  local target_file="$1"
+  [[ -f "$target_file" ]] || return 0
 
   while IFS= read -r line || [[ -n "$line" ]]; do
     line="${line#${line%%[![:space:]]*}}"
@@ -46,9 +44,28 @@ load_env() {
         export "$key=$value"
       fi
     fi
-  done < "$ENV_FILE"
+  done < "$target_file"
 
-  echo "Loaded environment from $ENV_FILE"
+  echo "Loaded environment from $target_file"
+}
+
+load_env() {
+  if [[ -n "${ENV_FILE:-}" ]]; then
+    if [[ ! -f "$ENV_FILE" ]]; then
+      echo "WARNING: $ENV_FILE not found. Create .env from the committed placeholder and fill in values."
+      return
+    fi
+    load_env_file "$ENV_FILE"
+  else
+    if [[ -f "$ROOT_DIR/.env.local" ]]; then
+      load_env_file "$ROOT_DIR/.env.local"
+    fi
+    if [[ -f "$ROOT_DIR/.env" ]]; then
+      load_env_file "$ROOT_DIR/.env"
+    else
+      echo "WARNING: $ROOT_DIR/.env not found. Create .env from the committed placeholder and fill in values."
+    fi
+  fi
 }
 
 require_command() {
