@@ -11,12 +11,10 @@ router_settings:
   redis_host: "os.environ/REDIS_HOST"
   redis_port: "os.environ/REDIS_PORT"
   redis_password: "os.environ/REDIS_PASSWORD"
-
   ######################################################
   # Service / Error Fallbacks (Using exact model IDs)
   ######################################################
   fallbacks:
-
     # ==================================================
     # Gemini Models (Mainline)
     # ==================================================
@@ -24,17 +22,14 @@ router_settings:
         - gemini-3.6-flash
         - gemini-3.5-flash
         - GLM-5.3
-
     - gemini-3.6-flash:
         - gemini-3.7-flash
         - gemini-3.5-flash
         - GLM-5.3
-
     - gemini-3.5-flash:
         - gemini-3.6-flash
         - gemini-3.7-flash
         - GLM-5.3
-
     # ==================================================
     # Zhipu GLM Models (Mainline)
     # ==================================================
@@ -42,81 +37,6 @@ router_settings:
         - gemini-3.7-flash
         - gemini-3.6-flash
         - gemini-3.5-flash
-
-    # ==================================================
-    # NVIDIA Nemotron
-    # ==================================================
-    - nvidia/nemotron-3.5-lightning:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-        - GLM-5.3
-
-    # ==================================================
-    # Meta Llama Models
-    # ==================================================
-    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-        - GLM-5.3
-
-    - meta-llama/llama-3-3-70b-instruct:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-        - GLM-5.3
-
-    # ==================================================
-    # Small & Preview Models
-    # ==================================================
-    - gemma-4-26b-a4b-it:
-        - gemini-3.5-flash
-        - gemini-3.7-flash
-        - GLM-5.3
-
-    - ibm/granite-4-h-small:
-        - gemini-3.5-flash
-        - GLM-5.3
-
-    # ==================================================
-    # IBM Specialized Domain Models
-    # ==================================================
-    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
-        - GLM-5.3
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - TMF-llama3.1-8b:251028_no_sys_prompt:
-        - GLM-5.3
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-  ######################################################
-  # Context Window Fallbacks (Route small context -> 1M Gemini)
-  ######################################################
-  context_window_fallbacks:
-
-    - meta-llama/llama-4-maverick-17b-128e-instruct-fp8:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - meta-llama/llama-3-3-70b-instruct:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - gemma-4-26b-a4b-it:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - ibm/granite-4-h-small:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - BIAN-llama3.1-8b:260213_pad_free_assistant_only:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
-
-    - TMF-llama3.1-8b:251028_no_sys_prompt:
-        - gemini-3.7-flash
-        - gemini-3.6-flash
 litellm_settings:
   drop_params: true
   use_chat_completions_url_for_anthropic_messages: true
@@ -127,7 +47,6 @@ litellm_settings:
     port: "os.environ/REDIS_PORT"
     password: "os.environ/REDIS_PASSWORD"
     namespace: "litellm.caching.caching"
-
 ########################################################
 # Models (Exact 1:1 original model IDs from models.json)
 ########################################################
@@ -137,193 +56,103 @@ model_list:
   # Gemini Models
   # ======================================================
   ########################################################
-
   - model_name: gemini-3.7-flash
     litellm_params:
       model: openai/gemini-3.7-flash
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
       context_window: 1048576
-
   - model_name: gemini-3.6-flash
     litellm_params:
       model: openai/gemini-3.6-flash
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
       context_window: 1048576
-
   - model_name: gemini-3.5-flash
     litellm_params:
       model: openai/gemini-3.5-flash
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
       context_window: 1048576
-
-  ########################################################
-  # ======================================================
-  # NVIDIA Models
-  # ======================================================
-  ########################################################
-
-  - model_name: nvidia/nemotron-3.5-lightning
-    litellm_params:
-      model: openai/nvidia/nemotron-3.5-lightning
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-
-  ########################################################
-  # ======================================================
-  # Meta Llama Models
-  # ======================================================
-  ########################################################
-
-  - model_name: meta-llama/llama-4-maverick-17b-128e-instruct-fp8
-    litellm_params:
-      model: openai/meta-llama/llama-4-maverick-17b-128e-instruct-fp8
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-
-  - model_name: meta-llama/llama-3-3-70b-instruct
-    litellm_params:
-      model: openai/meta-llama/llama-3-3-70b-instruct
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-
-  ########################################################
-  # ======================================================
-  # Google Gemma & IBM Granite Models
-  # ======================================================
-  ########################################################
-
-  - model_name: gemma-4-26b-a4b-it
-    litellm_params:
-      model: openai/gemma-4-26b-a4b-it
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-
-  - model_name: ibm/granite-4-h-small
-    litellm_params:
-      model: openai/ibm/granite-4-h-small
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-      context_window: 20480
-
-  ########################################################
-  # ======================================================
-  # IBM Specialized Domain Models
-  # ======================================================
-  ########################################################
-
-  - model_name: BIAN-llama3.1-8b:260213_pad_free_assistant_only
-    litellm_params:
-      model: openai/BIAN-llama3.1-8b:260213_pad_free_assistant_only
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-
-  - model_name: TMF-llama3.1-8b:251028_no_sys_prompt
-    litellm_params:
-      model: openai/TMF-llama3.1-8b:251028_no_sys_prompt
-      api_base: "os.environ/ICA_BASE"
-      api_key: "os.environ/ICA_KEY"
-
   ########################################################
   # ======================================================
   # Zhipu GLM Models
   # ======================================================
   ########################################################
-
   - model_name: GLM-5.3
     litellm_params:
       model: openai/rits/zai-org/glm-5-3
       api_base: "os.environ/ICA_BASE"
       api_key: "os.environ/ICA_KEY"
-
   ########################################################
   # ======================================================
   # Local Ollama Models
   # ======================================================
   ########################################################
-
   - model_name: local-translator
     litellm_params:
       model: ollama/translator:latest
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-qwen2.5:14b
     litellm_params:
       model: ollama/qwen2.5:14b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-qwen2.5:7b
     litellm_params:
       model: ollama/qwen2.5:7b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-qwen2.5-coder:7b
     litellm_params:
       model: ollama/qwen2.5-coder:7b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-qwen2.5-coder:1.5b-base
     litellm_params:
       model: ollama/qwen2.5-coder:1.5b-base
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-llama3.1:8b
     litellm_params:
       model: ollama/llama3.1:8b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-qwen3:8b
     litellm_params:
       model: ollama/qwen3:8b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-qwen3:14b
     litellm_params:
       model: ollama/qwen3:14b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-qwen3:4b
     litellm_params:
       model: ollama/qwen3:4b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-deepseek-coder:6.7b
     litellm_params:
       model: ollama/deepseek-coder:6.7b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-deepseek-r1:8b
     litellm_params:
       model: ollama/deepseek-r1:8b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-mistral:7b
     litellm_params:
       model: ollama/mistral:7b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-phi4:latest
     litellm_params:
       model: ollama/phi4:latest
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-gemma3:12b
     litellm_params:
       model: ollama/gemma3:12b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-gemma4:12b
     litellm_params:
       model: ollama/gemma4:12b
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-minicpm-v:latest
     litellm_params:
       model: ollama/minicpm-v:latest
       api_base: "os.environ/OLLAMA_API_BASE"
-
   - model_name: local-nomic-embed-text:latest
     litellm_params:
       model: ollama/nomic-embed-text:latest
